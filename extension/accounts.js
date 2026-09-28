@@ -1,7 +1,7 @@
 // trust: 0–100 (higher = more reliable / independent)
 // blocked: true → content hidden behind overlay by default
 
-const PLUTO_CATEGORIES = {
+const BALLOON_CATEGORIES = {
   "state-propaganda": {
     label: "State-Affiliated",
     color: "#b45309",
@@ -38,7 +38,7 @@ const PLUTO_CATEGORIES = {
   }
 };
 
-const PLUTO_ACCOUNTS = [
+const BALLOON_ACCOUNTS = [
 
   // ═══ RUSSIAN STATE PROPAGANDA (blocked by default) ════════════════════════
 

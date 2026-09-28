@@ -27,10 +27,7 @@
     "satire":           `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h7a.8.8 0 01.8.8V7a.8.8 0 01-.8.8H6.5L4.5 9.5V7.8H2A.8.8 0 011.2 7V2.8A.8.8 0 012 2Z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M3.5 5.5c.3-.6.9-.6 1.4 0 .4.6 1.1.6 1.4 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg>`
   };
 
-  // Magnifying-glass logo — identical paths, 3 rendered sizes
-  const PLUTO_LOGO_SM = `<svg width="16" height="16" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/><line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/></svg>`;
-  const PLUTO_LOGO_MD = `<svg width="26" height="26" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/><line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/></svg>`;
-  const PLUTO_LOGO_LG = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/><line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/></svg>`;
+  // Logo SVGs come from BalloonCore.logo() so each copy gets its own gradient id
 
   // ── Load ──────────────────────────────────────────────────────────────────────
 
@@ -45,7 +42,7 @@
         const blockedOverride = data.blockedOverrides || {};
         const custom          = data.customAccounts   || [];
 
-        const merged = [...PLUTO_ACCOUNTS, ...custom].filter(
+        const merged = [...BALLOON_ACCOUNTS, ...custom].filter(
           a => !disabled.has(a.handle.toLowerCase())
         );
 
@@ -73,7 +70,7 @@
   }
 
   function cat(account) {
-    const c = PLUTO_CATEGORIES[account.category];
+    const c = BALLOON_CATEGORIES[account.category];
     if (!c || c.hidden) return null;
     return c;
   }
@@ -89,29 +86,29 @@
   function bumpCount(n = 1, account = null) {
     sessionCount += n;
     if (account) pageFlags.set(account.handle, account);
-    try { chrome.runtime.sendMessage({ type: "PLUTO_COUNT", delta: n }); } catch (_) {}
+    try { chrome.runtime.sendMessage({ type: "BALLOON_COUNT", delta: n }); } catch (_) {}
     updateSidebarCount();
   }
 
   // ── Toast ─────────────────────────────────────────────────────────────────────
 
   function showToast(msg, sub = "") {
-    document.querySelectorAll(".pluto-toast").forEach(t => t.remove());
+    document.querySelectorAll(".balloon-toast").forEach(t => t.remove());
     const toast = document.createElement("div");
-    toast.className = "pluto-toast";
+    toast.className = "balloon-toast";
     toast.innerHTML = `
-      <span class="pluto-toast-icon">${PLUTO_LOGO_SM}</span>
-      <div class="pluto-toast-text">
-        <span class="pluto-toast-main">${msg}</span>
-        ${sub ? `<span class="pluto-toast-sub">${sub}</span>` : ""}
+      <span class="balloon-toast-icon">${BalloonCore.logo(16)}</span>
+      <div class="balloon-toast-text">
+        <span class="balloon-toast-main">${msg}</span>
+        ${sub ? `<span class="balloon-toast-sub">${sub}</span>` : ""}
       </div>
     `;
     document.body.appendChild(toast);
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => toast.classList.add("pluto-toast-show"));
+      requestAnimationFrame(() => toast.classList.add("balloon-toast-show"));
     });
     setTimeout(() => {
-      toast.classList.remove("pluto-toast-show");
+      toast.classList.remove("balloon-toast-show");
       toast.addEventListener("transitionend", () => toast.remove(), { once: true });
     }, 3200);
   }
@@ -121,19 +118,19 @@
   function quickFlag(handle) {
     const h = handle.toLowerCase();
     chrome.storage.sync.get(["customAccounts", "disabledHandles"], data => {
-      const all = [...PLUTO_ACCOUNTS, ...(data.customAccounts || [])];
+      const all = [...BALLOON_ACCOUNTS, ...(data.customAccounts || [])];
       const disabled = new Set((data.disabledHandles || []).map(x => x.toLowerCase()));
 
       if (disabled.has(h)) {
         // Re-enable if disabled
         chrome.storage.sync.set({
           disabledHandles: (data.disabledHandles || []).filter(x => x.toLowerCase() !== h)
-        }, () => showToast(`@${handle} re-enabled`, "Warning restored in Pluto"));
+        }, () => showToast(`@${handle} re-enabled`, "Warning restored in Balloon"));
         return;
       }
 
       if (all.some(a => a.handle.toLowerCase() === h)) {
-        showToast(`@${handle} is already flagged`, "Open Pluto popup to edit");
+        showToast(`@${handle} is already flagged`, "Open Balloon popup to edit");
         return;
       }
 
@@ -143,7 +140,7 @@
         label: "Unverified Claims",
         category: "misinformation",
         blocked: false,
-        detail: `Flagged via Pluto quick-add on Twitter.`
+        detail: `Flagged via Balloon quick-add on Twitter.`
       });
       chrome.storage.sync.set({ customAccounts: custom }, () => {
         showToast(`@${handle} flagged`, "Tap popup to change category");
@@ -153,14 +150,14 @@
 
   // ── Tweet "···" menu injection ─────────────────────────────────────────────────
 
-  function makePlutoMenuItem(handle) {
+  function makeBalloonMenuItem(handle) {
     const item = document.createElement("div");
-    item.className = "pluto-menu-item";
+    item.className = "balloon-menu-item";
     item.setAttribute("role", "menuitem");
     item.setAttribute("tabindex", "0");
     item.innerHTML = `
-      <span class="pluto-menu-icon">${PLUTO_LOGO_SM}</span>
-      <span class="pluto-menu-text">Flag @${handle} with Pluto…</span>
+      <span class="balloon-menu-icon">${BalloonCore.logo(16)}</span>
+      <span class="balloon-menu-text">Flag @${handle} with Balloon…</span>
     `;
     item.addEventListener("click", e => {
       e.stopPropagation();
@@ -211,12 +208,12 @@
         const dropdown =
           (node.dataset?.testid === "Dropdown" ? node : null) ||
           node.querySelector?.('[data-testid="Dropdown"]');
-        if (dropdown && pendingMenuHandle && !dropdown.querySelector(".pluto-menu-item")) {
+        if (dropdown && pendingMenuHandle && !dropdown.querySelector(".balloon-menu-item")) {
           const h = pendingMenuHandle;
           pendingMenuHandle = null;
           const divider = document.createElement("div");
-          divider.className = "pluto-menu-divider";
-          const item = makePlutoMenuItem(h);
+          divider.className = "balloon-menu-divider";
+          const item = makeBalloonMenuItem(h);
           dropdown.insertBefore(divider, dropdown.firstChild);
           dropdown.insertBefore(item, dropdown.firstChild);
         }
@@ -226,19 +223,19 @@
 
   // ── Sidebar widget ─────────────────────────────────────────────────────────────
 
-  const SIDEBAR_ID = "pluto-sidebar-widget";
-  const PANEL_ID   = "pluto-sidebar-panel";
+  const SIDEBAR_ID = "balloon-sidebar-widget";
+  const PANEL_ID   = "balloon-sidebar-panel";
 
   function renderPanel() {
-    const list   = document.getElementById("pluto-panel-list");
-    const footer = document.getElementById("pluto-panel-footer");
+    const list   = document.getElementById("balloon-panel-list");
+    const footer = document.getElementById("balloon-panel-footer");
     if (!list) return;
     list.innerHTML = "";
 
     const attachRescan = (btn) => {
       btn?.addEventListener("click", () => {
         document.querySelectorAll('article[data-testid="tweet"]').forEach(a => {
-          delete a.dataset.plutoTweet;
+          delete a.dataset.balloonTweet;
         });
         scan(document.body);
         setTimeout(renderPanel, 300);
@@ -276,22 +273,22 @@
     const el = document.createElement("div");
     el.id = SIDEBAR_ID;
     el.innerHTML = `
-      <div class="psw-wrap" id="pluto-wrap">
+      <div class="psw-wrap" id="balloon-wrap">
         <div class="psw-icon-wrap psw-glow">
-          ${PLUTO_LOGO_LG}
-          <span class="psw-pill pluto-pill-hide" id="pluto-pill"></span>
+          ${BalloonCore.logo(36)}
+          <span class="psw-pill balloon-pill-hide" id="balloon-pill"></span>
         </div>
-        <span class="psw-name">Pluto</span>
+        <span class="psw-name">Balloon</span>
         <span class="psw-beta">BETA</span>
       </div>
-      <div class="pluto-panel" id="${PANEL_ID}">
-        <div class="pp-header"><span>Flagged on this page</span><span class="pp-shortcut">Alt+P</span></div>
-        <div class="pp-list" id="pluto-panel-list"></div>
-        <div class="pp-footer" id="pluto-panel-footer"></div>
+      <div class="balloon-panel" id="${PANEL_ID}">
+        <div class="pp-header"><span>Flagged on this page</span><span class="pp-shortcut">Alt+B</span></div>
+        <div class="pp-list" id="balloon-panel-list"></div>
+        <div class="pp-footer" id="balloon-panel-footer"></div>
       </div>
     `;
 
-    el.querySelector("#pluto-wrap").addEventListener("click", togglePanel);
+    el.querySelector("#balloon-wrap").addEventListener("click", togglePanel);
 
     return el;
   }
@@ -304,32 +301,32 @@
     if (opening) renderPanel();
   }
 
-  // Alt+P keyboard shortcut to toggle the panel
+  // Alt+B keyboard shortcut to toggle the panel
   document.addEventListener("keydown", e => {
-    if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === "p") {
+    if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === "KeyB") {
       e.preventDefault();
       togglePanel();
     }
   }, true);
 
   function updateSidebarCount() {
-    const pill = document.getElementById("pluto-pill");
+    const pill = document.getElementById("balloon-pill");
     if (!pill) return;
     if (sessionCount > 0) {
       const prev = parseInt(pill.dataset.n || "0");
       pill.textContent = sessionCount;
       pill.dataset.n = sessionCount;
-      pill.classList.remove("pluto-pill-hide");
+      pill.classList.remove("balloon-pill-hide");
       if (sessionCount !== prev) {
-        pill.classList.remove("pluto-bump");
+        pill.classList.remove("balloon-bump");
         void pill.offsetWidth;
-        pill.classList.add("pluto-bump");
+        pill.classList.add("balloon-bump");
       }
       // Refresh open panel
       const p = document.getElementById(PANEL_ID);
       if (p?.classList.contains("pp-open")) renderPanel();
     } else {
-      pill.classList.add("pluto-pill-hide");
+      pill.classList.add("balloon-pill-hide");
     }
   }
 
@@ -347,8 +344,12 @@
     return el.parentElement || el;
   }
 
+  function twitterEnabled() {
+    return settings.platforms?.twitter !== false;
+  }
+
   function injectSidebarWidget() {
-    if (!settings.showSidebarWidget) return;
+    if (!settings.showSidebarWidget || !twitterEnabled()) return;
     if (document.getElementById(SIDEBAR_ID)) return;
 
     const sideNav =
@@ -415,18 +416,18 @@
   function makeBadge(account) {
     const c = cat(account);
     const el = document.createElement("span");
-    el.className = `pluto-badge pluto-cat-${account.category}`;
-    el.dataset.plutoHandle = account.handle;
+    el.className = `balloon-badge balloon-cat-${account.category}`;
+    el.dataset.balloonHandle = account.handle;
     el.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
     el.setAttribute("role", "img");
-    el.setAttribute("aria-label", `Pluto: ${c.label}`);
+    el.setAttribute("aria-label", `Balloon: ${c.label}`);
     el.innerHTML = `
       <span class="pb-icon">${ICONS[account.category] || ""}</span>
       <span class="pb-text">${account.label || c.label}</span>
     `;
 
     const tip = document.createElement("div");
-    tip.className = "pluto-tip";
+    tip.className = "balloon-tip";
     tip.innerHTML = `
       <div class="pt-head">
         <div class="pt-head-icon">${ICONS[account.category] || ""}</div>
@@ -447,10 +448,10 @@
   function makeAvatarDot(account) {
     const c = cat(account);
     const dot = document.createElement("span");
-    dot.className = "pluto-avatar-dot";
-    dot.dataset.plutoHandle = account.handle;
+    dot.className = "balloon-avatar-dot";
+    dot.dataset.balloonHandle = account.handle;
     dot.style.background = c.dotColor;
-    dot.title = `Pluto: ${c.label}`;
+    dot.title = `Balloon: ${c.label}`;
     return dot;
   }
 
@@ -459,43 +460,43 @@
   function makeProfileBanner(account) {
     const c = cat(account);
     const banner = document.createElement("div");
-    banner.id = "pluto-profile-banner";
-    banner.className = `pluto-banner pluto-cat-${account.category}`;
+    banner.id = "balloon-profile-banner";
+    banner.className = `balloon-banner balloon-cat-${account.category}`;
     banner.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
 
     banner.innerHTML = `
-      <div class="pluto-banner-content">
-        <div class="pluto-banner-row1">
-          <span class="pluto-banner-cat-icon">${ICONS[account.category] || ""}</span>
-          <span class="pluto-banner-name">${account.label || c.label}${account.country ? " " + flagEmoji(account.country) : ""}</span>
-          <span class="pluto-banner-cat-chip">${c.label}</span>
-          ${account.blocked && settings.blockContent ? '<span class="pluto-banner-blocked-chip">Content hidden</span>' : ""}
+      <div class="balloon-banner-content">
+        <div class="balloon-banner-row1">
+          <span class="balloon-banner-cat-icon">${ICONS[account.category] || ""}</span>
+          <span class="balloon-banner-name">${account.label || c.label}${account.country ? " " + flagEmoji(account.country) : ""}</span>
+          <span class="balloon-banner-cat-chip">${c.label}</span>
+          ${account.blocked && settings.blockContent ? '<span class="balloon-banner-blocked-chip">Content hidden</span>' : ""}
         </div>
-        ${account.detail ? `<div class="pluto-banner-detail">${account.detail}</div>` : ""}
-        ${account.source ? `<div class="pluto-banner-source">${account.source}</div>` : ""}
+        ${account.detail ? `<div class="balloon-banner-detail">${account.detail}</div>` : ""}
+        ${account.source ? `<div class="balloon-banner-source">${account.source}</div>` : ""}
       </div>
-      <div class="pluto-banner-btns">
-        <button class="pluto-banner-trust" title="Mark as trusted">
+      <div class="balloon-banner-btns">
+        <button class="balloon-banner-trust" title="Mark as trusted">
           <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5L4 8.5L9.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Trust
         </button>
-        <button class="pluto-banner-close" aria-label="Dismiss">
+        <button class="balloon-banner-close" aria-label="Dismiss">
           <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
       </div>
     `;
-    banner.querySelector(".pluto-banner-trust").addEventListener("click", () => {
+    banner.querySelector(".balloon-banner-trust").addEventListener("click", () => {
       chrome.storage.sync.get("trustedHandles", data => {
         const trusted = data.trustedHandles || [];
         if (!trusted.includes(account.handle)) trusted.push(account.handle);
         chrome.storage.sync.set({ trustedHandles: trusted }, () => {
-          showToast(`@${account.handle} marked as trusted`, "Pluto warnings removed for this account");
+          showToast(`@${account.handle} marked as trusted`, "Balloon warnings removed for this account");
           banner.remove();
         });
       });
     });
-    banner.querySelector(".pluto-banner-close").addEventListener("click", () => {
-      banner.classList.add("pluto-banner-out");
+    banner.querySelector(".balloon-banner-close").addEventListener("click", () => {
+      banner.classList.add("balloon-banner-out");
       banner.addEventListener("transitionend", () => banner.remove(), { once: true });
     });
     return banner;
@@ -506,7 +507,7 @@
   function makeBlockOverlay(account) {
     const c = cat(account);
     const ov = document.createElement("div");
-    ov.className = "pluto-block-overlay";
+    ov.className = "balloon-block-overlay";
     ov.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
     ov.innerHTML = `
       <div class="pbo-inner">
@@ -522,9 +523,9 @@
     ov.querySelector(".pbo-btn").addEventListener("click", e => {
       e.stopPropagation();
       const art = ov.closest("article");
-      if (art) { art.classList.remove("pluto-blocked"); art.dataset.plutoRevealed = "1"; }
+      if (art) { art.classList.remove("balloon-blocked"); art.dataset.balloonRevealed = "1"; }
       ov.classList.add("pbo-out");
-      ov.addEventListener("transitionend", () => ov.remove(), { once: true });
+      setTimeout(() => ov.remove(), 380);
     });
     return ov;
   }
@@ -532,7 +533,7 @@
   // ── Process tweet ──────────────────────────────────────────────────────────────
 
   function processTweet(article) {
-    if (article.dataset.plutoTweet) return;
+    if (article.dataset.balloonTweet) return;
 
     const userBlock = article.querySelector('[data-testid="User-Name"]');
     if (!userBlock) return;
@@ -545,7 +546,7 @@
     }
     if (!handle) return;
 
-    article.dataset.plutoTweet = handle;
+    article.dataset.balloonTweet = handle;
     const account = accountMap[handle];
     const c = cat(account);
     if (!c) return; // category hidden (misinformation/conspiracy/satire)
@@ -554,7 +555,7 @@
       const link = [...links].find(a => handleFromHref(a.getAttribute("href")) === handle);
       if (link) {
         const row = link.closest("[dir]") || link.parentElement;
-        if (row && !row.querySelector(`.pluto-badge[data-pluto-handle="${handle}"]`)) {
+        if (row && !row.querySelector(`.balloon-badge[data-balloon-handle="${handle}"]`)) {
           link.insertAdjacentElement("afterend", makeBadge(account));
           bumpCount(1, account);
         }
@@ -563,7 +564,7 @@
 
     if (settings.showAvatarDot) {
       const av = article.querySelector('[data-testid="Tweet-User-Avatar"]');
-      if (av && !av.querySelector(".pluto-avatar-dot")) {
+      if (av && !av.querySelector(".balloon-avatar-dot")) {
         av.style.position = "relative";
         av.appendChild(makeAvatarDot(account));
       }
@@ -572,12 +573,12 @@
     if (settings.highlightTweets && !account.blocked) {
       article.style.setProperty("--phc", c.bgColor);
       article.style.setProperty("--phb", c.borderColor);
-      article.classList.add("pluto-highlighted");
+      article.classList.add("balloon-highlighted");
     }
 
-    if (settings.blockContent && account.blocked && !article.dataset.plutoRevealed) {
-      article.classList.add("pluto-blocked");
-      if (!article.querySelector(".pluto-block-overlay")) {
+    if (settings.blockContent && account.blocked && !article.dataset.balloonRevealed) {
+      article.classList.add("balloon-blocked");
+      if (!article.querySelector(".balloon-block-overlay")) {
         article.appendChild(makeBlockOverlay(account));
       }
     }
@@ -586,16 +587,16 @@
   // ── User cells ────────────────────────────────────────────────────────────────
 
   function processUserCell(cell) {
-    if (cell.dataset.plutoDone) return;
+    if (cell.dataset.balloonDone) return;
     const link = cell.querySelector("a[href]");
     if (!link) return;
     const handle = handleFromHref(link.getAttribute("href"));
     if (!handle || !accountMap[handle]) return;
     if (!cat(accountMap[handle])) return; // category hidden
-    cell.dataset.plutoDone = handle;
+    cell.dataset.balloonDone = handle;
     if (!settings.showTweetBadge) return;
     const nameEl = cell.querySelector('[dir="ltr"] span') || link;
-    if (!nameEl.parentElement?.querySelector(`.pluto-badge[data-pluto-handle="${handle}"]`)) {
+    if (!nameEl.parentElement?.querySelector(`.balloon-badge[data-balloon-handle="${handle}"]`)) {
       nameEl.insertAdjacentElement("afterend", makeBadge(accountMap[handle]));
     }
   }
@@ -609,7 +610,7 @@
 
   function tryProfileBanner() {
     if (!settings.showProfileBanner) return;
-    if (document.getElementById("pluto-profile-banner")) return;
+    if (document.getElementById("balloon-profile-banner")) return;
 
     const parts = window.location.pathname.split("/").filter(Boolean);
     if (!parts.length || NON_PROFILE.has(parts[0].toLowerCase())) return;
@@ -638,7 +639,7 @@
   // ── Scan ──────────────────────────────────────────────────────────────────────
 
   function scan(root) {
-    if (!root?.querySelectorAll) return;
+    if (!root?.querySelectorAll || !twitterEnabled()) return;
     root.querySelectorAll('article[data-testid="tweet"]').forEach(processTweet);
     root.querySelectorAll('[data-testid="UserCell"]').forEach(processUserCell);
     tryProfileBanner();
@@ -658,7 +659,7 @@
   new MutationObserver(() => {
     if (location.href === lastUrl) return;
     lastUrl = location.href;
-    document.getElementById("pluto-profile-banner")?.remove();
+    document.getElementById("balloon-profile-banner")?.remove();
     pageFlags.clear();
     sessionCount = 0;
     updateSidebarCount();
@@ -673,13 +674,13 @@
   chrome.storage.onChanged.addListener(() => {
     reload(() => {
       document.querySelectorAll(
-        ".pluto-badge,.pluto-block-overlay,.pluto-avatar-dot,#pluto-profile-banner,#pluto-sidebar-widget"
+        ".balloon-badge,.balloon-block-overlay,.balloon-avatar-dot,#balloon-profile-banner,#balloon-sidebar-widget"
       ).forEach(el => el.remove());
-      document.querySelectorAll("[data-pluto-tweet],[data-pluto-done]").forEach(el => {
-        el.classList.remove("pluto-blocked","pluto-highlighted");
-        delete el.dataset.plutoTweet;
-        delete el.dataset.plutoDone;
-        delete el.dataset.plutoRevealed;
+      document.querySelectorAll("[data-balloon-tweet],[data-balloon-done]").forEach(el => {
+        el.classList.remove("balloon-blocked","balloon-highlighted");
+        delete el.dataset.balloonTweet;
+        delete el.dataset.balloonDone;
+        delete el.dataset.balloonRevealed;
         el.style.removeProperty("--phc");
         el.style.removeProperty("--phb");
       });
@@ -692,5 +693,17 @@
   reload(() => {
     scan(document.body);
     domObserver.observe(document.body, { childList: true, subtree: true });
+  });
+
+  // ── Source links + keyword filter (shared core) ──────────────────────────────
+
+  BalloonCore.watch({
+    platform: "twitter",
+    postSelector: 'article[data-testid="tweet"]',
+    getText: art => BalloonCore.textOf(art),
+    // Link cards show "From rt.com" while the href is a t.co shortlink
+    extraText: art => [...art.querySelectorAll('[data-testid="card.wrapper"]')]
+      .map(BalloonCore.textOf).join(" "),
+    stripHost: art => art.querySelector('[data-testid="tweetText"]')?.parentElement || null
   });
 })();

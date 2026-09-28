@@ -1,0 +1,273 @@
+/* ═══════════════════════════════════════════════════════════
+   BALLOON — shared styles (all platforms)
+═══════════════════════════════════════════════════════════ */
+
+@keyframes balloon-float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-6px) rotate(3deg); }
+}
+@keyframes balloon-sway {
+  0%, 100% { transform: rotate(6deg); }
+  50%      { transform: rotate(-6deg); }
+}
+@keyframes balloon-pop-in {
+  0%   { opacity: 0; transform: scale(0.4); }
+  60%  { opacity: 1; transform: scale(1.12); }
+  80%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+@keyframes balloon-pop-out {
+  0%   { opacity: 1; transform: scale(1); filter: blur(0); }
+  40%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 0; transform: scale(1.35); filter: blur(6px); }
+}
+@keyframes balloon-slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes balloon-glow {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pbd, #ef4444) 45%, transparent); }
+  50%      { box-shadow: 0 0 0 4px color-mix(in srgb, var(--pbd, #ef4444) 0%, transparent); }
+}
+@keyframes balloon-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+@keyframes balloon-count-bump {
+  0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); }
+}
+
+.balloon-logo { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+/* ── Account badge ─────────────────────────────────────────── */
+
+.balloon-core-badge {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-left: 6px; padding: 2px 8px;
+  border-radius: 999px;
+  font: 700 11px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--pc); background: var(--pb);
+  border: 1.5px solid var(--pbd);
+  vertical-align: middle; white-space: nowrap; cursor: help;
+  animation: balloon-pop-in 0.5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.bcb-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--pbd);
+  animation: balloon-glow 2s ease-in-out infinite;
+}
+
+/* ── Tooltip ───────────────────────────────────────────────── */
+
+.balloon-core-tip {
+  position: absolute; left: 0; top: calc(100% + 8px); z-index: 2147483000;
+  width: 280px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+  background: #13111c; color: #e5e7eb;
+  border: 1px solid rgba(167,139,250,0.3); border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  font: 400 12px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  white-space: normal; text-align: left;
+  opacity: 0; transform: translateY(-4px) scale(0.98); pointer-events: none;
+  transition: opacity 0.16s, transform 0.16s;
+}
+.balloon-core-tip strong { color: #fff; font-size: 13px; }
+.balloon-core-tip em     { color: #a78bfa; font-style: normal; font-size: 11px; font-weight: 600; }
+.balloon-core-tip small  { color: #9ca3af; font-size: 10.5px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; margin-top: 2px; }
+.balloon-core-badge:hover .balloon-core-tip,
+.bss-item:hover .balloon-core-tip,
+.bss-item:focus .balloon-core-tip { opacity: 1; transform: none; }
+
+/* ── Highlighted bad-source links ──────────────────────────── */
+
+a.balloon-src-link {
+  text-decoration: none !important;
+  background-image: linear-gradient(90deg, var(--pbd), color-mix(in srgb, var(--pbd) 30%, transparent), var(--pbd)) !important;
+  background-size: 200% 2px !important;
+  background-repeat: no-repeat !important;
+  background-position: 0 100% !important;
+  animation: balloon-shimmer 2.4s linear infinite;
+  border-radius: 3px;
+  outline: 1.5px dashed color-mix(in srgb, var(--pbd) 55%, transparent);
+  outline-offset: 2px;
+}
+
+/* ── Source strip (under a post) ───────────────────────────── */
+
+.balloon-src-strip {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 8px 0 4px; padding: 7px 10px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(168,85,247,0.08), rgba(236,72,153,0.06));
+  border: 1px solid rgba(168,85,247,0.25);
+  font: 500 12px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: balloon-slide-up 0.4s cubic-bezier(.22,1,.36,1) both;
+  position: relative; z-index: 2;
+}
+.bss-logo { display: inline-flex; animation: balloon-float 3s ease-in-out infinite; }
+.bss-item {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 9px; border-radius: 999px;
+  color: var(--pc); background: var(--pb); border: 1.5px solid var(--pbd);
+  cursor: help;
+  animation: balloon-pop-in 0.5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.bss-item b { font-weight: 800; }
+
+/* ── Blocked post overlay ──────────────────────────────────── */
+
+.balloon-core-blocked { position: relative !important; min-height: 96px; }
+.balloon-core-blocked > *:not(.balloon-core-overlay) {
+  filter: blur(14px) saturate(0.6);
+  pointer-events: none; user-select: none;
+  transition: filter 0.4s;
+}
+.balloon-core-overlay {
+  position: absolute; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px;
+  background: linear-gradient(160deg, rgba(250,245,255,0.72), rgba(253,242,248,0.72));
+  backdrop-filter: blur(2px);
+  animation: balloon-slide-up 0.35s ease both;
+  cursor: default;
+}
+.bco-card {
+  display: flex; align-items: center; gap: 14px;
+  max-width: 460px; width: 100%;
+  padding: 14px 16px;
+  background: #fff; border-radius: 16px;
+  border: 1.5px solid var(--pbd, #c4b5fd);
+  box-shadow: 0 12px 32px rgba(76,29,149,0.16);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: balloon-pop-in 0.55s cubic-bezier(.34,1.56,.64,1) both;
+}
+.bco-balloon { animation: balloon-float 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+.bco-text { flex: 1; min-width: 0; }
+.bco-reason { font-size: 14px; font-weight: 800; color: var(--pc, #5b21b6); }
+.bco-detail { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.bco-btn {
+  flex-shrink: 0;
+  padding: 8px 14px; border-radius: 999px; border: none; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 12px; line-height: 1;
+  color: #fff; background: linear-gradient(135deg, #a855f7, #ec4899);
+  box-shadow: 0 4px 14px rgba(168,85,247,0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.bco-btn:hover { transform: translateY(-1px) scale(1.04); box-shadow: 0 6px 18px rgba(168,85,247,0.45); }
+.balloon-core-overlay.bco-pop { animation: balloon-pop-out 0.38s ease-in forwards; }
+
+/* ── Profile banner ────────────────────────────────────────── */
+
+.balloon-core-banner {
+  display: flex; align-items: flex-start; gap: 14px;
+  margin: 12px; padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--pb); border: 1.5px solid var(--pbd); color: #111827;
+  font: 400 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: balloon-slide-up 0.45s cubic-bezier(.22,1,.36,1) both;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.balloon-core-banner.bcbn-out { opacity: 0; transform: translateY(-8px) scale(0.98); }
+.bcbn-balloon { animation: balloon-float 3s ease-in-out infinite; }
+.bcbn-body { flex: 1; min-width: 0; }
+.bcbn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.bcbn-row strong { color: var(--pc); font-size: 14px; }
+.bcbn-chip {
+  font-size: 10.5px; font-weight: 700; padding: 1px 8px; border-radius: 999px;
+  color: var(--pc); border: 1.5px solid var(--pbd); background: #fff;
+}
+.bcbn-blocked { color: #fff; background: var(--pbd); }
+.bcbn-detail { margin-top: 4px; color: #374151; }
+.bcbn-source { margin-top: 4px; font-size: 11px; color: #6b7280; }
+.bcbn-btns { display: flex; gap: 6px; }
+.bcbn-btns button {
+  border: 1.5px solid var(--pbd); background: #fff; color: var(--pc);
+  border-radius: 999px; padding: 4px 10px; font-family: inherit; font-weight: 700; font-size: 11px; cursor: pointer;
+}
+
+/* ── Floating balloon widget ───────────────────────────────── */
+
+#balloon-float {
+  position: fixed; right: 22px; bottom: 22px; z-index: 2147483000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.bf-btn {
+  position: relative; display: block;
+  width: 58px; height: 58px; border: none; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #faf5ff, #ede9fe);
+  box-shadow: 0 10px 30px rgba(109,40,217,0.35), inset 0 0 0 1.5px rgba(167,139,250,0.5);
+  cursor: pointer;
+  animation: balloon-float 3.4s ease-in-out infinite;
+  transition: box-shadow 0.2s;
+}
+.bf-btn:hover { box-shadow: 0 14px 36px rgba(109,40,217,0.5), inset 0 0 0 2px #a855f7; }
+.bf-btn .balloon-logo { position: relative; top: 1px; }
+.bf-count {
+  position: absolute; top: -4px; right: -4px;
+  min-width: 20px; height: 20px; padding: 0 5px;
+  display: none; align-items: center; justify-content: center;
+  border-radius: 10px; background: linear-gradient(135deg, #ec4899, #a855f7);
+  color: #fff; font-size: 11px; font-weight: 800;
+  box-shadow: 0 0 0 2px #fff;
+}
+.bf-count.bf-count-on { display: inline-flex; }
+.bf-count.bf-bump { animation: balloon-count-bump 0.45s cubic-bezier(.34,1.56,.64,1); }
+.bf-panel {
+  position: absolute; right: 0; bottom: 72px;
+  width: 280px; max-height: 0; overflow: hidden; opacity: 0;
+  background: #13111c; color: #e5e7eb;
+  border: 1px solid rgba(167,139,250,0.28); border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  transform: translateY(10px) scale(0.96); transform-origin: bottom right;
+  transition: max-height 0.35s cubic-bezier(.22,1,.36,1), opacity 0.2s, transform 0.35s cubic-bezier(.34,1.56,.64,1);
+}
+#balloon-float.bf-open .bf-panel { max-height: 340px; opacity: 1; transform: none; }
+.bf-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; font-size: 10px; font-weight: 800; letter-spacing: 0.6px;
+  text-transform: uppercase; color: #a78bfa;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.bf-key { color: #6b7280; font-weight: 600; }
+.bf-list { max-height: 290px; overflow-y: auto; padding: 4px 0; }
+.bf-row {
+  display: flex; align-items: center; gap: 8px; padding: 7px 14px; font-size: 12.5px;
+  animation: balloon-slide-up 0.3s ease both;
+}
+.bf-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pbd); flex-shrink: 0; }
+.bf-label { flex: 1; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bf-chip { font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 999px; color: var(--pc); background: var(--pb); }
+.bf-empty { padding: 16px 14px; font-size: 12px; color: #9ca3af; text-align: center; }
+
+/* ── Toast ─────────────────────────────────────────────────── */
+
+.balloon-core-toast {
+  position: fixed; left: 50%; bottom: 28px; z-index: 2147483001;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-radius: 14px;
+  background: #13111c; color: #fff;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  font: 600 13px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  opacity: 0; transform: translate(-50%, 16px) scale(0.96);
+  transition: opacity 0.3s, transform 0.35s cubic-bezier(.34,1.56,.64,1);
+}
+.balloon-core-toast.bct-show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.bct-icon { display: inline-flex; animation: balloon-float 2.6s ease-in-out infinite; }
+.bct-sub { font-size: 11.5px; font-weight: 400; color: #a1a1aa; }
+
+/* ── Dark themes ───────────────────────────────────────────── */
+
+html.dark .balloon-core-overlay,
+html[dark] .balloon-core-overlay,
+html.__fb-dark-mode .balloon-core-overlay {
+  background: linear-gradient(160deg, rgba(19,17,28,0.78), rgba(30,16,40,0.78));
+}
+html.dark .bco-card, html[dark] .bco-card, html.__fb-dark-mode .bco-card { background: #1c1a27; }
+html.dark .bco-detail, html[dark] .bco-detail, html.__fb-dark-mode .bco-detail { color: #a1a1aa; }
+
+@media (prefers-reduced-motion: reduce) {
+  .balloon-core-badge, .bcb-dot, a.balloon-src-link, .balloon-src-strip, .bss-logo, .bss-item,
+  .balloon-core-overlay, .bco-card, .bco-balloon, .balloon-core-banner, .bcbn-balloon,
+  .bf-btn, .bf-row, .bct-icon { animation: none !important; }
+}
