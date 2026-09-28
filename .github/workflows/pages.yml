@@ -1,0 +1,48 @@
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", "extension/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Scrape X trending"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Build site
+        run: |
+          mkdir -p _site
+          cp -r docs/. _site/
+          # The site reads the live account + source lists straight from the extension
+          mkdir -p _site/ext
+          cp extension/accounts.js extension/sources.js extension/aliases.js _site/ext/
+          # Downloadable, ready-to-load extension
+          (cd extension && zip -qr ../_site/balloon-extension.zip . -x "*.DS_Store")
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

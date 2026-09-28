@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Balloon — Pop the propaganda bubble</title>
+  <meta name="description" content="Balloon is a free Chrome extension that verifies sources on X, YouTube, Instagram and Facebook. It highlights bad sources and state media, and blocks the posts you don't want to see." />
+  <meta property="og:title" content="Balloon — Source verification for your feed" />
+  <meta property="og:description" content="Highlights bad sources and state media on X, YouTube, Instagram and Facebook — and blocks the posts you don't want to see." />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <canvas id="sky" aria-hidden="true"></canvas>
+
+  <nav class="topbar">
+    <a class="brand" href="#top">
+      <img src="assets/logo.svg" alt="" width="34" height="34" />
+      <span>Balloon</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#platforms">Platforms</a>
+      <a href="#check">Check a link</a>
+      <a href="#trending">Live scan</a>
+      <a class="nav-cta" href="#install">Install</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ─────────────────────────────────────────────────── -->
+  <header class="hero" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow reveal">Free Chrome extension · Open source</span>
+      <h1 class="reveal">
+        Pop the<br />
+        <span class="grad" id="rotator">propaganda</span><br />
+        bubble.
+      </h1>
+      <p class="lede reveal">
+        Balloon checks every post you scroll past on <b>X</b>, <b>YouTube</b>, <b>Instagram</b> and
+        <b>Facebook</b>. It highlights state media and bad sources and cites where each warning comes from. It can also block the posts you'd rather not see.
+      </p>
+      <div class="cta-row reveal">
+        <a class="btn btn-primary" href="balloon-extension.zip" download id="downloadBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download for Chrome
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/Inasjackw321/Balloon---Source-verification">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .4.2.7.8.6A11.5 11.5 0 0023.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+      <div class="hero-stats reveal">
+        <div><b data-stat="accounts">—</b><span>flagged accounts</span></div>
+        <div><b data-stat="sources">—</b><span>flagged websites</span></div>
+        <div><b>4</b><span>platforms</span></div>
+      </div>
+    </div>
+
+    <!-- Animated demo feed -->
+    <div class="hero-demo reveal" aria-label="Animated demo of Balloon on a social feed">
+      <div class="phone">
+        <div class="phone-bar"><span></span><span></span><span></span><em>demo feed</em></div>
+        <div class="scanline"></div>
+        <div class="feed" id="demoFeed">
+          <article class="post" data-demo="source">
+            <div class="avatar" style="--h:200"></div>
+            <div class="post-body">
+              <div class="post-head"><b>Daily Scroller</b> <span>@daily_scroller · 2m</span></div>
+              <p>Wow, is this true?? 👀 <a class="demo-link">rt.com/news/59123…</a></p>
+              <div class="demo-strip">
+                <img src="assets/logo.svg" alt="" width="16" height="16" />
+                <span class="chip chip-state"><b>rt.com</b> · State-Affiliated 🇷🇺</span>
+              </div>
+            </div>
+          </article>
+          <article class="post" data-demo="blocked">
+            <div class="avatar" style="--h:30"></div>
+            <div class="post-body">
+              <div class="post-head"><b>State TV Example</b> <span>@state_tv · 5m</span></div>
+              <p>Officials confirm everything is going exactly to plan. Nothing to see here.</p>
+              <div class="post-media"></div>
+            </div>
+            <div class="demo-overlay">
+              <div class="demo-card">
+                <img class="float" src="assets/logo.svg" alt="" width="30" height="30" />
+                <div><b>State-Affiliated media</b><small>Hidden by Balloon</small></div>
+                <button type="button" class="pop-btn">View anyway</button>
+              </div>
+            </div>
+          </article>
+          <article class="post" data-demo="badge">
+            <div class="avatar" style="--h:320"></div>
+            <div class="post-body">
+              <div class="post-head"><b>Hot Takes 24/7</b> <span class="demo-badge">▲ Bad Source</span></div>
+              <p>BREAKING: you won't believe what they're hiding from you…</p>
+            </div>
+          </article>
+          <article class="post" data-demo="clear">
+            <div class="avatar" style="--h:140"></div>
+            <div class="post-body">
+              <div class="post-head"><b>Local Reporter</b> <span>@local_reporter · 9m</span></div>
+              <p>Council meeting moved to Thursday. Agenda and documents linked below.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="floaters" aria-hidden="true">
+        <span class="floater f1"></span><span class="floater f2"></span><span class="floater f3"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── How it works ─────────────────────────────────────────── -->
+  <section class="section" id="how">
+    <h2 class="reveal">How Balloon works</h2>
+    <p class="section-lede reveal">Three steps, run on your own device every time a post appears. Nothing you browse ever leaves your browser.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-icon">🔎</div>
+        <h3>Detect</h3>
+        <p>Matches the author against a curated list of state-affiliated, state-funded and low-credibility accounts, including their aliases across platforms.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-icon">🔗</div>
+        <h3>Verify</h3>
+        <p>Unwraps redirect links (t.co, l.facebook.com, YouTube redirects) and checks the real destination against a list of known bad sources.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-icon">🎈</div>
+        <h3>Decide</h3>
+        <p>Flagged posts get a badge and a cited source strip. Posts you've chosen to block are hidden behind an overlay you can open with one click.</p>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature reveal"><span>🏷️</span><div><b>Cited warnings</b><p>Every badge links its evidence: EU sanctions, Ofcom rulings, FARA filings and more.</p></div></div>
+      <div class="feature reveal"><span>🚫</span><div><b>Keyword blocking</b><p>Hide posts containing any word or phrase, on every platform at once.</p></div></div>
+      <div class="feature reveal"><span>🌐</span><div><b>Website blocking</b><p>Right-click any link to block its website, or block posts linking to bad sources.</p></div></div>
+      <div class="feature reveal"><span>✅</span><div><b>Your call</b><p>Trust an account, disable a rule, or export your settings. Nothing is hidden for good.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ── Platforms ────────────────────────────────────────────── -->
+  <section class="section" id="platforms">
+    <h2 class="reveal">Works where you scroll</h2>
+    <div class="platform-grid">
+      <div class="platform-card tilt reveal" style="--c1:#1d1d1f;--c2:#3a3a3c">
+        <div class="p-logo">𝕏</div><h3>X / Twitter</h3>
+        <p>Badges, avatar dots, profile banners, a sidebar widget, and link-card source checks.</p>
+      </div>
+      <div class="platform-card tilt reveal" style="--c1:#ff0033;--c2:#b0001f">
+        <div class="p-logo">▶</div><h3>YouTube</h3>
+        <p>Channel badges on every video card, watch-page banners and description link checks.</p>
+      </div>
+      <div class="platform-card tilt reveal" style="--c1:#f59e0b;--c2:#ec4899;--c3:#8b5cf6">
+        <div class="p-logo">◎</div><h3>Instagram</h3>
+        <p>Feed post badges, profile banners and caption source checks, plus the floating Balloon.</p>
+      </div>
+      <div class="platform-card tilt reveal" style="--c1:#1877f2;--c2:#0b4fb3">
+        <div class="p-logo">f</div><h3>Facebook</h3>
+        <p>Page badges and link-preview verification through Facebook's redirect links, plus keyword blocking.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Link checker ─────────────────────────────────────────── -->
+  <section class="section" id="check">
+    <h2 class="reveal">Try it: check a link</h2>
+    <p class="section-lede reveal">This uses the same source list as the extension. Paste any URL, including Facebook and YouTube redirect links.</p>
+    <form class="checker reveal" id="checker" autocomplete="off">
+      <input id="checkInput" type="text" placeholder="e.g. https://www.rt.com/news/…" aria-label="Link to check" />
+      <button class="btn btn-primary" type="submit">Check</button>
+    </form>
+    <div class="examples reveal">
+      Try:
+      <button type="button" data-try="https://sputnikglobe.com/20260101/story">sputnikglobe.com</button>
+      <button type="button" data-try="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.infowars.com%2Fposts%2F1">a Facebook redirect</button>
+      <button type="button" data-try="https://www.reuters.com/world/">reuters.com</button>
+    </div>
+    <div class="verdict" id="verdict" aria-live="polite"></div>
+  </section>
+
+  <!-- ── Live X trending scan ─────────────────────────────────── -->
+  <section class="section" id="trending">
+    <h2 class="reveal">Live scan: X trending</h2>
+    <p class="section-lede reveal">
+      A trending topic on X, scraped with <a href="https://github.com/D4Vinci/Scrapling">Scrapling</a>, with every post run through Balloon's checks.
+    </p>
+    <div class="scan reveal" id="scan">
+      <div class="scan-loading">Loading scan…</div>
+    </div>
+  </section>
+
+  <!-- ── Install ──────────────────────────────────────────────── -->
+  <section class="section" id="install">
+    <h2 class="reveal">Install in under a minute</h2>
+    <ol class="install">
+      <li class="reveal"><span>1</span><div><b>Download</b><p><a href="balloon-extension.zip" download>balloon-extension.zip</a> and unzip it.</p></div></li>
+      <li class="reveal"><span>2</span><div><b>Open extensions</b><p>Go to <code>chrome://extensions</code> and switch on <em>Developer mode</em>.</p></div></li>
+      <li class="reveal"><span>3</span><div><b>Load unpacked</b><p>Click <em>Load unpacked</em> and pick the unzipped folder. Pin the 🎈 and you're done.</p></div></li>
+    </ol>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-balloons" aria-hidden="true"><span></span><span></span><span></span></div>
+    <p><img src="assets/logo.svg" alt="" width="22" height="22" /> <b>Balloon</b>: open-source source verification for your feed.</p>
+    <p class="muted">Flags are based on public records (sanctions, broadcast regulators, foreign-agent filings) and fact-checking research. They're a starting point, not a verdict. Always check for yourself.</p>
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="tooltip"></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

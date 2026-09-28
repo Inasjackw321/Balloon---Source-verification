@@ -1,0 +1,10 @@
+{
+  "source_url": "https://x.com/i/trending/2104378106551406609",
+  "scraped_at": null,
+  "scraper": "Scrapling StealthyFetcher",
+  "status": "pending",
+  "message": "This trending page hasn't been scraped yet. Run the \"Scrape X trending\" GitHub Action (add X_AUTH_TOKEN / X_CT0 repository secrets) or run python scraper/scrape_x_trending.py locally.",
+  "topic": {},
+  "summary": {},
+  "posts": []
+}
