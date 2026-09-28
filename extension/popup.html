@@ -2,527 +2,293 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Pluto</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --pluto:       #7c3aed;
-      --pluto-light: #ede9fe;
-      --pluto-dim:   #5b21b6;
-      --bg:          #f8f7ff;
-      --surface:     #ffffff;
-      --border:      #e5e7eb;
-      --border2:     #f3f4f6;
-      --text:        #111827;
-      --text2:       #6b7280;
-      --text3:       #9ca3af;
-      --radius:      10px;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      width: 360px;
-      min-height: 520px;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 13px;
-    }
-
-    /* ── Header ─────────────────────────────────────────────── */
-
-    .header {
-      background: #0c0c14;
-      padding: 16px 18px 14px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .header-logo-wrap {
-      width: 40px; height: 40px; flex-shrink: 0;
-      background: rgba(124,58,237,0.15);
-      border: 1.5px solid rgba(124,58,237,0.3);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      filter: drop-shadow(0 0 6px rgba(124,58,237,0.4));
-    }
-    .header-logo { width: 32px; height: 32px; }
-    .header-info h1 {
-      font-size: 17px; font-weight: 800; color: #fff;
-      letter-spacing: -0.4px; display: flex; align-items: center; gap: 6px;
-    }
-    .header-beta {
-      font-size: 8px; font-weight: 800; letter-spacing: 0.5px;
-      color: #a78bfa; border: 1.5px solid rgba(167,139,250,0.5);
-      border-radius: 5px; padding: 1px 4px; line-height: 1.3;
-      vertical-align: middle;
-    }
-    .header-info p {
-      font-size: 10.5px; color: #6d6d8a; margin-top: 2px;
-    }
-    .header-count {
-      margin-left: auto;
-      background: var(--pluto);
-      color: #fff; font-size: 11px; font-weight: 700;
-      padding: 4px 10px; border-radius: 20px;
-      display: none; flex-shrink: 0;
-    }
-    .header-count.visible { display: block; }
-
-    /* ── Tabs ───────────────────────────────────────────────── */
-
-    .tabs {
-      display: flex;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 14px;
-      gap: 4px;
-    }
-    .tab-btn {
-      flex: 0 0 auto;
-      padding: 10px 10px 9px;
-      font-size: 12px; font-weight: 600;
-      color: var(--text3); background: none; border: none;
-      border-bottom: 2px solid transparent;
-      cursor: pointer; font-family: inherit;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .tab-btn.active { color: var(--pluto); border-bottom-color: var(--pluto); }
-    .tab-btn:hover:not(.active) { color: var(--text2); }
-
-    /* ── Panes ──────────────────────────────────────────────── */
-    .pane { display: none; }
-    .pane.active { display: block; }
-
-    /* ── Shared ─────────────────────────────────────────────── */
-
-    input, select, textarea {
-      font-family: inherit; font-size: 12.5px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.14s, box-shadow 0.14s;
-    }
-    input:focus, select:focus {
-      border-color: var(--pluto);
-      box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
-    }
-
-    .btn-primary {
-      background: var(--pluto); color: #fff;
-      border: none; border-radius: var(--radius);
-      padding: 7px 15px; font-size: 12px; font-weight: 600;
-      cursor: pointer; font-family: inherit;
-      transition: background 0.14s;
-      white-space: nowrap;
-    }
-    .btn-primary:hover { background: var(--pluto-dim); }
-
-    .btn-ghost {
-      background: var(--bg); color: var(--text2);
-      border: 1.5px solid var(--border);
-      border-radius: 7px;
-      padding: 4px 10px; font-size: 11px; font-weight: 600;
-      cursor: pointer; font-family: inherit;
-      transition: background 0.12s, color 0.12s, border-color 0.12s;
-      white-space: nowrap;
-    }
-    .btn-ghost:hover { background: var(--border2); }
-    .btn-ghost.danger { color: #991b1b; }
-    .btn-ghost.danger:hover { background: #fef2f2; border-color: #fca5a5; }
-    .btn-ghost.active-flag { color: var(--pluto); border-color: var(--pluto-light); background: var(--pluto-light); }
-
-    /* ── ACCOUNTS PANE ──────────────────────────────────────── */
-
-    .search-row {
-      display: flex; align-items: center; gap: 8px;
-      padding: 10px 14px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-    .search-row input { flex: 1; padding: 6px 10px; }
-    .acc-count { font-size: 10.5px; color: var(--text3); flex-shrink: 0; }
-
-    .add-section {
-      padding: 10px 14px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-    .add-row { display: flex; gap: 5px; align-items: center; }
-    .add-row input { flex: 1; padding: 6px 10px; }
-    .add-row select { padding: 6px 5px; }
-    .add-err { font-size: 11px; color: #991b1b; min-height: 15px; margin-top: 4px; }
-    .pending-pill {
-      display: none; align-items: center; gap: 6px;
-      background: var(--pluto-light); border-radius: 8px;
-      padding: 5px 9px; margin-bottom: 7px; font-size: 11.5px;
-    }
-    .pending-pill span { color: var(--pluto); font-weight: 600; }
-    .pending-pill button {
-      margin-left: auto; background: none; border: none;
-      cursor: pointer; color: var(--text3); font-size: 12px;
-    }
-
-    /* Account list */
-    .acc-list {
-      max-height: 240px; overflow-y: auto;
-      background: var(--surface);
-    }
-
-    .acc-item {
-      display: flex; align-items: center; gap: 7px;
-      padding: 8px 14px;
-      border-bottom: 1px solid var(--border2);
-      transition: background 0.1s;
-    }
-    .acc-item:hover { background: var(--bg); }
-    .acc-item.disabled .acc-handle { color: var(--text3); text-decoration: line-through; }
-
-    .acc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-    .acc-handle {
-      flex: 1; font-size: 12.5px; font-weight: 600;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-
-    .acc-cat-chip {
-      font-size: 10px; font-weight: 700; padding: 2px 7px;
-      border-radius: 10px; white-space: nowrap;
-      flex-shrink: 0; border: 1.5px solid currentColor;
-    }
-
-    .blocked-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #ef4444; flex-shrink: 0;
-      title: "Content blocked";
-    }
-
-    .acc-actions { display: flex; gap: 3px; flex-shrink: 0; }
-
-    /* No results */
-    .no-results {
-      padding: 20px 14px; text-align: center;
-      font-size: 12px; color: var(--text3);
-    }
-
-    /* Trusted section */
-    .trusted-section {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-    }
-    .trusted-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 14px;
-      cursor: pointer; border: none; background: none;
-      width: 100%; text-align: left; font-family: inherit;
-    }
-    .trusted-header-text {
-      font-size: 11px; font-weight: 600; color: #22c55e;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .trusted-header-arrow { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
-    .trusted-header.open .trusted-header-arrow { transform: rotate(180deg); }
-    .trusted-list { display: none; border-top: 1px solid var(--border2); }
-    .trusted-list.open { display: block; }
-    .trusted-item {
-      display: flex; align-items: center; gap: 7px;
-      padding: 6px 14px; border-bottom: 1px solid var(--border2);
-      font-size: 12px;
-    }
-    .trusted-handle { flex: 1; font-weight: 600; }
-    .trusted-tag {
-      font-size: 10px; color: #22c55e; background: #f0fdf4;
-      border: 1px solid #86efac; padding: 1px 6px; border-radius: 8px;
-    }
-
-    /* io bar */
-    .io-bar {
-      display: flex; gap: 6px; padding: 8px 14px;
-      border-top: 1px solid var(--border);
-      background: var(--surface); justify-content: flex-end;
-    }
-
-    /* ── SETTINGS PANE ──────────────────────────────────────── */
-
-    .settings-group {
-      padding: 12px 14px 8px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-    .sg-title {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .7px; color: var(--text3); margin-bottom: 10px;
-    }
-    .toggle-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 9px 0;
-      border-bottom: 1px solid var(--border2);
-    }
-    .toggle-row:last-child { border-bottom: none; }
-    .toggle-label { font-size: 12.5px; font-weight: 600; }
-    .toggle-desc  { font-size: 11px; color: var(--text3); margin-top: 2px; line-height: 1.4; }
-
-    .switch {
-      position: relative; width: 38px; height: 22px; flex-shrink: 0;
-    }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .switch-track {
-      position: absolute; inset: 0;
-      background: #d1d5db; border-radius: 11px; cursor: pointer;
-      transition: background 0.2s;
-    }
-    .switch-track::after {
-      content: ""; position: absolute;
-      top: 3px; left: 3px;
-      width: 16px; height: 16px;
-      background: #fff; border-radius: 50%;
-      transition: transform 0.2s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-    }
-    .switch input:checked ~ .switch-track { background: var(--pluto); }
-    .switch input:checked ~ .switch-track::after { transform: translateX(16px); }
-
-    /* ── ABOUT PANE ─────────────────────────────────────────── */
-
-    .about-section {
-      padding: 12px 14px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-    }
-    .about-section h3 {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .7px; color: var(--text3); margin-bottom: 10px;
-    }
-    .cat-row {
-      display: flex; gap: 10px; align-items: flex-start;
-      padding: 7px 0; border-bottom: 1px solid var(--border2);
-    }
-    .cat-row:last-child { border-bottom: none; }
-    .cat-chip {
-      font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px;
-      border: 1.5px solid currentColor; white-space: nowrap; flex-shrink: 0; margin-top: 1px;
-    }
-    .cat-chip.sp  { color: #b45309; background: #fffbeb; }
-    .cat-chip.sf  { color: #92400e; background: #fef3c7; }
-    .cat-chip.mi  { color: #991b1b; background: #fef2f2; }
-    .cat-chip.co  { color: #6d28d9; background: #f5f3ff; }
-    .cat-chip.sa  { color: #1d4ed8; background: #eff6ff; }
-    .cat-desc { font-size: 11.5px; color: var(--text2); line-height: 1.45; }
-
-    .about-text {
-      font-size: 11.5px; color: var(--text2); line-height: 1.6;
-    }
-
-    /* ── Footer ─────────────────────────────────────────────── */
-    .footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 14px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      font-size: 10.5px; color: var(--text3);
-    }
-  </style>
+  <title>Balloon</title>
+  <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-logo-wrap">
-      <svg class="header-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/>
-        <line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/>
-        <line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/>
-        <line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
-      </svg>
+  <!-- Header: animated sky with a floating balloon -->
+  <header class="header">
+    <div class="sky" aria-hidden="true">
+      <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+      <span class="mini-balloon b1"></span><span class="mini-balloon b2"></span><span class="mini-balloon b3"></span>
     </div>
-    <div class="header-info">
-      <h1>Pluto <span class="header-beta">BETA</span></h1>
-      <p>Media Intelligence for Twitter/X &amp; YouTube</p>
+    <div class="header-main">
+      <div class="logo-float" id="logoFloat" title="Pop!">
+        <svg class="logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><radialGradient id="hg" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#f0abfc"/><stop offset="0.45" stop-color="#a855f7"/><stop offset="1" stop-color="#6d28d9"/></radialGradient></defs>
+          <path d="M18 2.5C11.6 2.5 7 7.4 7 13.5c0 7 5.9 12.5 9.6 13.9h2.8C23.1 26 29 20.5 29 13.5 29 7.4 24.4 2.5 18 2.5Z" fill="url(#hg)"/>
+          <path d="M16.2 27.3h3.6L18 29.6Z" fill="#6d28d9"/>
+          <ellipse cx="12.8" cy="9.6" rx="2.2" ry="3.4" transform="rotate(-24 12.8 9.6)" fill="#fff" opacity="0.45"/>
+          <path d="M13.4 14.2l3.1 3.1 6-6.4" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="string" viewBox="0 0 10 30" fill="none"><path d="M5 0c-4 6 4 10 0 16s4 10 0 14" stroke="#c4b5fd" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <div class="header-info">
+        <h1>Balloon <span class="beta">BETA</span></h1>
+        <p>Source verification for X, YouTube, Instagram &amp; Facebook</p>
+      </div>
+      <div class="header-count" id="headerCount"></div>
     </div>
-    <div class="header-count" id="headerCount"></div>
-  </div>
+    <div class="stats">
+      <div class="stat"><b id="statAccounts">0</b><span>accounts</span></div>
+      <div class="stat"><b id="statSources">0</b><span>sources</span></div>
+      <div class="stat"><b id="statKeywords">0</b><span>filters</span></div>
+      <div class="stat"><b id="statPlatforms">0</b><span>platforms</span></div>
+    </div>
+  </header>
 
   <!-- Tabs -->
-  <div class="tabs">
+  <nav class="tabs" id="tabs">
     <button class="tab-btn active" data-tab="accounts">Accounts</button>
-    <button class="tab-btn"        data-tab="settings">Settings</button>
-    <button class="tab-btn"        data-tab="about">About</button>
-  </div>
+    <button class="tab-btn" data-tab="sources">Sources</button>
+    <button class="tab-btn" data-tab="filters">Filters</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
+    <button class="tab-btn" data-tab="about">About</button>
+    <span class="tab-ink" id="tabInk"></span>
+  </nav>
 
-  <!-- ── ACCOUNTS ─────────────────────────────────────────────── -->
-  <div class="pane active" id="tab-accounts">
+  <main class="panes">
 
-    <div class="search-row">
-      <input id="searchInput" type="text" placeholder="Search by name, handle, or category…" autocomplete="off" />
-      <span class="acc-count" id="accCount"></span>
-    </div>
-
-    <div class="add-section">
-      <div class="pending-pill" id="pendingPill">
-        <span id="pendingText"></span>
-        <button id="pendingClear">✕</button>
+    <!-- ── ACCOUNTS ─────────────────────────────────────────── -->
+    <section class="pane active" id="tab-accounts">
+      <div class="search-row">
+        <input id="searchInput" type="text" placeholder="Search by name, handle, or category…" autocomplete="off" />
+        <span class="acc-count" id="accCount"></span>
       </div>
-      <div class="add-row">
-        <input id="handleInput" type="text" placeholder="@username" autocomplete="off" spellcheck="false" />
-        <select id="catSelect">
-          <option value="state-propaganda">State-Affiliated</option>
-          <option value="state-funded">State-Funded</option>
-          <option value="misinformation">Bad Source</option>
-        </select>
-        <button class="btn-primary" id="addBtn">Add</button>
-      </div>
-      <div class="add-err" id="addErr"></div>
-    </div>
 
-    <div class="acc-list" id="accList"></div>
-
-    <!-- Trusted accounts (whitelist) -->
-    <div class="trusted-section">
-      <button class="trusted-header" id="trustedToggle">
-        <span class="trusted-header-text">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4H11L8.5 6.5L9.5 10L6 8L2.5 10L3.5 6.5L1 4H4.5L6 1Z" fill="#22c55e"/></svg>
-          Trusted accounts
-        </span>
-        <span class="trusted-header-arrow">▾</span>
-      </button>
-      <div class="trusted-list" id="trustedList"></div>
-    </div>
-
-    <div class="io-bar">
-      <button class="btn-ghost" id="exportBtn">Export</button>
-      <label class="btn-ghost" style="cursor:pointer">
-        Import <input type="file" id="importFile" accept=".json" style="display:none" />
-      </label>
-    </div>
-
-  </div>
-
-  <!-- ── SETTINGS ─────────────────────────────────────────────── -->
-  <div class="pane" id="tab-settings">
-
-    <div class="settings-group">
-      <div class="sg-title">Display</div>
-
-      <div class="toggle-row">
-        <div>
-          <div class="toggle-label">Sidebar widget</div>
-          <div class="toggle-desc">Show "Pluto" widget in Twitter and YouTube sidebars</div>
+      <div class="add-section">
+        <div class="pending-pill" id="pendingPill">
+          <span id="pendingText"></span>
+          <button id="pendingClear" aria-label="Clear">✕</button>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="s-sidebar" />
-          <span class="switch-track"></span>
+        <div class="add-row">
+          <input id="handleInput" type="text" placeholder="@username" autocomplete="off" spellcheck="false" />
+          <select id="catSelect">
+            <option value="state-propaganda">State-Affiliated</option>
+            <option value="state-funded">State-Funded</option>
+            <option value="misinformation">Bad Source</option>
+          </select>
+          <button class="btn-primary" id="addBtn">Add</button>
+        </div>
+        <div class="add-err" id="addErr"></div>
+      </div>
+
+      <div class="list" id="accList"></div>
+
+      <div class="trusted-section">
+        <button class="trusted-header" id="trustedToggle">
+          <span class="trusted-header-text">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4H11L8.5 6.5L9.5 10L6 8L2.5 10L3.5 6.5L1 4H4.5L6 1Z" fill="#22c55e"/></svg>
+            Trusted accounts
+          </span>
+          <span class="trusted-header-arrow">▾</span>
+        </button>
+        <div class="trusted-list" id="trustedList"></div>
+      </div>
+
+      <div class="io-bar">
+        <button class="btn-ghost" id="exportBtn">Export</button>
+        <label class="btn-ghost" style="cursor:pointer">
+          Import <input type="file" id="importFile" accept=".json" style="display:none" />
         </label>
       </div>
+    </section>
 
-      <div class="toggle-row">
-        <div>
-          <div class="toggle-label">Profile banner</div>
-          <div class="toggle-desc">Show warning above a flagged account's timeline</div>
+    <!-- ── SOURCES ──────────────────────────────────────────── -->
+    <section class="pane" id="tab-sources">
+      <div class="checker">
+        <div class="sg-title">Check a link</div>
+        <div class="add-row">
+          <input id="checkInput" type="text" placeholder="Paste a URL or domain, e.g. rt.com/news/…" autocomplete="off" spellcheck="false" />
+          <button class="btn-primary" id="checkBtn">Check</button>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="s-banner" />
-          <span class="switch-track"></span>
-        </label>
+        <div class="verdict" id="verdict"></div>
       </div>
 
-      <div class="toggle-row">
-        <div>
-          <div class="toggle-label">Tweet badges</div>
-          <div class="toggle-desc">Show warning pill next to flagged usernames in tweets</div>
+      <div class="search-row">
+        <input id="srcSearch" type="text" placeholder="Search websites…" autocomplete="off" />
+        <span class="acc-count" id="srcCount"></span>
+      </div>
+
+      <div class="add-section">
+        <div class="add-row">
+          <input id="domainInput" type="text" placeholder="example.com" autocomplete="off" spellcheck="false" />
+          <select id="domainCat">
+            <option value="misinformation">Bad Source</option>
+            <option value="state-propaganda">State-Affiliated</option>
+            <option value="state-funded">State-Funded</option>
+          </select>
+          <button class="btn-primary" id="addDomainBtn">Add</button>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="s-badge" />
-          <span class="switch-track"></span>
-        </label>
+        <div class="add-err" id="domainErr"></div>
       </div>
 
-      <div class="toggle-row">
-        <div>
-          <div class="toggle-label">Avatar dot</div>
-          <div class="toggle-desc">Colour dot on profile pictures of flagged accounts</div>
+      <div class="list" id="srcList"></div>
+    </section>
+
+    <!-- ── FILTERS ──────────────────────────────────────────── -->
+    <section class="pane" id="tab-filters">
+      <div class="settings-group">
+        <div class="sg-title">Block posts containing…</div>
+        <div class="add-row">
+          <input id="kwInput" type="text" placeholder="Add a word or phrase" autocomplete="off" />
+          <button class="btn-primary" id="kwAdd">Add</button>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="s-avatar" />
-          <span class="switch-track"></span>
-        </label>
+        <div class="add-err" id="kwErr"></div>
+        <div class="chips" id="kwChips"></div>
+        <p class="hint">Matching posts on every platform are hidden behind a Balloon overlay you can pop open.</p>
       </div>
-    </div>
 
-    <div class="settings-group">
-      <div class="sg-title">Content</div>
-
-      <div class="toggle-row">
-        <div>
-          <div class="toggle-label">Block state propaganda</div>
-          <div class="toggle-desc">Blur tweets from state propaganda accounts — reveal with one click</div>
+      <div class="settings-group" style="border-bottom:none">
+        <div class="sg-title">Source rules</div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Highlight bad-source links</div>
+            <div class="toggle-desc">Underline links to flagged websites and add a source strip to the post</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-sources" /><span class="switch-track"></span></label>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="s-block" />
-          <span class="switch-track"></span>
-        </label>
-      </div>
-
-      <div class="toggle-row">
-        <div>
-          <div class="toggle-label">Highlight flagged tweets</div>
-          <div class="toggle-desc">Subtle background colour on tweets from flagged accounts</div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Block posts linking to blocked sources</div>
+            <div class="toggle-desc">Hide posts that link to websites marked “Blocked”</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-blocklinks" /><span class="switch-track"></span></label>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="s-highlight" />
-          <span class="switch-track"></span>
-        </label>
-      </div>
-    </div>
-
-    <div class="settings-group" style="border-bottom:none">
-      <div class="sg-title">Data</div>
-      <div class="toggle-row">
-        <div class="toggle-desc" style="max-width:220px">
-          Reset all custom accounts, trusted handles, and settings to defaults
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Keyword filter</div>
+            <div class="toggle-desc">Hide posts that match your words above</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-keywords" /><span class="switch-track"></span></label>
         </div>
-        <button class="btn-ghost danger" id="resetBtn">Reset all</button>
       </div>
-    </div>
+    </section>
 
-  </div>
-
-  <!-- ── ABOUT ─────────────────────────────────────────────────── -->
-  <div class="pane" id="tab-about">
-
-    <div class="about-section">
-      <h3>Warning categories</h3>
-      <div class="cat-row">
-        <span class="cat-chip sp">★ State-Affiliated</span>
-        <span class="cat-desc">Government-controlled with no editorial independence. Worst cases have content blocked.</span>
+    <!-- ── SETTINGS ─────────────────────────────────────────── -->
+    <section class="pane" id="tab-settings">
+      <div class="settings-group">
+        <div class="sg-title">Platforms</div>
+        <div class="platforms">
+          <label class="platform" data-p="twitter">
+            <input type="checkbox" id="p-twitter" />
+            <span class="p-icon">𝕏</span><span class="p-name">X / Twitter</span>
+          </label>
+          <label class="platform" data-p="youtube">
+            <input type="checkbox" id="p-youtube" />
+            <span class="p-icon">▶</span><span class="p-name">YouTube</span>
+          </label>
+          <label class="platform" data-p="instagram">
+            <input type="checkbox" id="p-instagram" />
+            <span class="p-icon">◎</span><span class="p-name">Instagram</span>
+          </label>
+          <label class="platform" data-p="facebook">
+            <input type="checkbox" id="p-facebook" />
+            <span class="p-icon">f</span><span class="p-name">Facebook</span>
+          </label>
+        </div>
       </div>
-      <div class="cat-row">
-        <span class="cat-chip sf">◉ State-Funded</span>
-        <span class="cat-desc">Funded by a government; may retain partial independence but serves state interests.</span>
+
+      <div class="settings-group">
+        <div class="sg-title">Display</div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Balloon widget</div>
+            <div class="toggle-desc">Sidebar widget on X and YouTube, floating balloon on Instagram and Facebook</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-sidebar" /><span class="switch-track"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Profile banner</div>
+            <div class="toggle-desc">Warning banner on a flagged account's profile or channel</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-banner" /><span class="switch-track"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Post badges</div>
+            <div class="toggle-desc">Warning pill next to flagged usernames</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-badge" /><span class="switch-track"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Avatar dot</div>
+            <div class="toggle-desc">Colour dot on profile pictures of flagged accounts (X)</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-avatar" /><span class="switch-track"></span></label>
+        </div>
       </div>
-      <div class="cat-row">
-        <span class="cat-chip mi">▲ Bad Source</span>
-        <span class="cat-desc">Consistently low accuracy, partisan fringe, or documented misinformation track record.</span>
+
+      <div class="settings-group">
+        <div class="sg-title">Content</div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Block flagged accounts</div>
+            <div class="toggle-desc">Blur posts from accounts marked “Blocked” — reveal with one click</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-block" /><span class="switch-track"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Highlight flagged posts</div>
+            <div class="toggle-desc">Subtle background colour on posts from flagged accounts (X)</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="s-highlight" /><span class="switch-track"></span></label>
+        </div>
       </div>
-    </div>
 
-    <div class="about-section" style="border-bottom:none">
-      <h3>Methodology &amp; sources</h3>
-      <p class="about-text">
-        Accounts are flagged based on: foreign-agent registrations (FARA, EU),
-        broadcast licence actions (Ofcom, FCC), academic research (Oxford Internet
-        Institute, Stanford Internet Observatory), and fact-checking databases
-        (Bellingcat, NewsGuard). Hover any badge on Twitter or YouTube for per-account citations.
-      </p>
-    </div>
+      <div class="settings-group" style="border-bottom:none">
+        <div class="sg-title">Data</div>
+        <div class="toggle-row">
+          <div class="toggle-desc" style="max-width:220px">
+            Reset custom accounts, sources, filters, trusted handles and settings to defaults
+          </div>
+          <button class="btn-ghost danger" id="resetBtn">Reset all</button>
+        </div>
+      </div>
+    </section>
 
-  </div>
+    <!-- ── ABOUT ────────────────────────────────────────────── -->
+    <section class="pane" id="tab-about">
+      <div class="about-section">
+        <h3>Warning categories</h3>
+        <div class="cat-row">
+          <span class="cat-chip sp">★ State-Affiliated</span>
+          <span class="cat-desc">Government-controlled with no editorial independence. Worst cases have content blocked.</span>
+        </div>
+        <div class="cat-row">
+          <span class="cat-chip sf">◉ State-Funded</span>
+          <span class="cat-desc">Funded by a government; may retain partial independence but serves state interests.</span>
+        </div>
+        <div class="cat-row">
+          <span class="cat-chip mi">▲ Bad Source</span>
+          <span class="cat-desc">Consistently low accuracy, partisan fringe, or documented misinformation track record.</span>
+        </div>
+      </div>
+      <div class="about-section" style="border-bottom:none">
+        <h3>Methodology &amp; sources</h3>
+        <p class="about-text">
+          Accounts and websites are flagged based on foreign-agent registrations (FARA, EU),
+          broadcast licence actions (Ofcom, FCC), sanctions (OFAC, EU), academic research
+          (Oxford Internet Institute, Stanford Internet Observatory) and fact-checking
+          databases. Hover any badge or source chip for its citations.
+        </p>
+      </div>
+    </section>
+  </main>
 
-  <div class="footer">
-    <span>Pluto v3.1</span>
-    <span>Hover a badge for source details</span>
-  </div>
+  <footer class="footer">
+    <span id="version">Balloon</span>
+    <span>Alt+B toggles the on-page panel</span>
+  </footer>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
 
   <script src="accounts.js"></script>
+  <script src="sources.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

@@ -1,25 +1,25 @@
 /* ═══════════════════════════════════════════════════════════════
-   Pluto — YouTube styles
+   Balloon — YouTube styles
    Uses !important on core layout properties to survive YouTube's
    aggressive CSS reset/cascade.
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── CSS reset for all Pluto elements ───────────────────────── */
-.pluto-yt-badge-wrap,
-.pluto-yt-badge,
-.pluto-yt-badge *,
-.pluto-yt-banner,
-.pluto-yt-banner *,
-.pluto-yt-sidebar,
-.pluto-yt-sidebar *,
-.pluto-yt-panel,
-.pluto-yt-panel * {
+/* ── CSS reset for all Balloon elements ───────────────────────── */
+.balloon-yt-badge-wrap,
+.balloon-yt-badge,
+.balloon-yt-badge *,
+.balloon-yt-banner,
+.balloon-yt-banner *,
+.balloon-yt-sidebar,
+.balloon-yt-sidebar *,
+.balloon-yt-panel,
+.balloon-yt-panel * {
   box-sizing: border-box !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
 }
 
 /* ── Badge wrapper — ensures block layout ───────────────────── */
-.pluto-yt-badge-wrap {
+.balloon-yt-badge-wrap {
   display: block !important;
   margin-top: 4px !important;
   overflow: visible !important;
@@ -27,7 +27,7 @@
 }
 
 /* ── Video card badge ────────────────────────────────────────── */
-.pluto-yt-badge {
+.balloon-yt-badge {
   display: inline-flex !important;
   align-items: center !important;
   gap: 3px !important;
@@ -48,7 +48,7 @@
   transition: opacity 0.15s;
 }
 
-.pluto-yt-badge:hover { opacity: 0.8 !important; }
+.balloon-yt-badge:hover { opacity: 0.8 !important; }
 
 .pyb-icon {
   font-size: 9px !important;
@@ -65,7 +65,7 @@
 }
 
 /* YouTube dark mode uses html[dark] attribute */
-html[dark] .pluto-yt-badge {
+html[dark] .balloon-yt-badge {
   background: rgba(15, 10, 5, 0.9) !important;
   border-color: var(--pbd, #d97706) !important;
   color: var(--pbd, #d97706) !important;
@@ -74,7 +74,7 @@ html[dark] .pluto-yt-badge {
 html[dark] .pyb-label { color: inherit !important; }
 
 /* ── Thumbnail block overlay ─────────────────────────────────── */
-.pluto-yt-block-overlay {
+.balloon-yt-block-overlay {
   position: absolute !important;
   inset: 0 !important;
   background: var(--pb, #fffbeb) !important;
@@ -87,7 +87,7 @@ html[dark] .pyb-label { color: inherit !important; }
   pointer-events: none !important;
 }
 
-html[dark] .pluto-yt-block-overlay {
+html[dark] .balloon-yt-block-overlay {
   background: rgba(10, 10, 10, 0.92) !important;
   opacity: 1 !important;
 }
@@ -116,7 +116,7 @@ html[dark] .pybo-inner { color: var(--pbd, #d97706) !important; }
 }
 
 /* ── Watch / channel page banner ─────────────────────────────── */
-.pluto-yt-banner {
+.balloon-yt-banner {
   display: flex !important;
   align-items: flex-start !important;
   justify-content: space-between !important;
@@ -134,7 +134,7 @@ html[dark] .pybo-inner { color: var(--pbd, #d97706) !important; }
   border-bottom: none !important;
 }
 
-html[dark] .pluto-yt-banner {
+html[dark] .balloon-yt-banner {
   background: rgba(22, 14, 6, 0.95) !important;
 }
 
@@ -276,7 +276,7 @@ html[dark] .pyt-trust:hover { background: rgba(255, 255, 255, 0.07) !important; 
 html[dark] .pyt-close:hover { color: #e2e8f0 !important; }
 
 /* ── Sidebar widget ──────────────────────────────────────────── */
-.pluto-yt-sidebar {
+.balloon-yt-sidebar {
   padding: 6px 0 2px !important;
   margin: 0 !important;
 }
@@ -357,7 +357,7 @@ html[dark] .pys-beta {
 }
 
 /* ── Sidebar panel ───────────────────────────────────────────── */
-.pluto-yt-panel {
+.balloon-yt-panel {
   overflow: hidden !important;
   max-height: 0 !important;
   opacity: 0 !important;
@@ -370,7 +370,7 @@ html[dark] .pys-beta {
   z-index: 100 !important;
 }
 
-.pluto-yt-panel.pyp-open {
+.balloon-yt-panel.pyp-open {
   max-height: 320px !important;
   opacity: 1 !important;
 }
@@ -473,3 +473,11 @@ html[dark] .pys-beta {
 }
 
 .pyp-rescan:hover { background: rgba(124, 58, 237, 0.1) !important; }
+
+/* ── Balloon motion layer ────────────────────────────────── */
+.pys-glow .balloon-logo { animation: balloon-float 3.4s ease-in-out infinite; transform-origin: 50% 100%; }
+.pys-widget:hover .pys-glow .balloon-logo { animation-duration: 1.4s; }
+.balloon-yt-badge { animation: balloon-pop-in 0.5s cubic-bezier(.34,1.56,.64,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .pys-glow .balloon-logo, .balloon-yt-badge { animation: none !important; }
+}

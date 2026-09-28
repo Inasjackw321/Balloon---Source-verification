@@ -1,0 +1,69 @@
+name: Scrape X trending
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: X trending URL to scrape
+        default: https://x.com/i/trending/2104378106551406609
+        required: true
+      scrolls:
+        description: How many times to scroll for more posts
+        default: "6"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape-x-trending
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Scrapling
+        run: |
+          pip install -r scraper/requirements.txt
+          scrapling install
+
+      - name: Test scraper
+        run: python -m unittest discover -s scraper/tests
+
+      - name: Scrape and verify
+        env:
+          X_AUTH_TOKEN: ${{ secrets.X_AUTH_TOKEN }}
+          X_CT0: ${{ secrets.X_CT0 }}
+          TREND_URL: ${{ inputs.url }}
+          SCROLLS: ${{ inputs.scrolls }}
+        run: |
+          python scraper/scrape_x_trending.py "$TREND_URL" \
+            --scrolls "$SCROLLS" --out "$RUNNER_TEMP/trending.json"
+          status=$(python -c "import json,sys; print(json.load(open(sys.argv[1]))['status'])" "$RUNNER_TEMP/trending.json")
+          echo "Scrape status: $status"
+          # Only replace the published report with a successful scrape
+          if [ "$status" = "ok" ]; then
+            cp "$RUNNER_TEMP/trending.json" docs/data/trending.json
+          else
+            cat "$RUNNER_TEMP/trending.json"
+          fi
+
+      - name: Commit report
+        run: |
+          if git diff --quiet -- docs/data/trending.json; then
+            echo "No new report to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/trending.json
+          git commit -m "Update X trending scan"
+          git push

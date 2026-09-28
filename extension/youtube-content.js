@@ -1,8 +1,8 @@
-// Pluto — Media Intelligence · YouTube content script
+// Balloon — Source Verification · YouTube content script
 (function () {
   'use strict';
-  if (window.__plutoYTLoaded) return;
-  window.__plutoYTLoaded = true;
+  if (window.__balloonYTLoaded) return;
+  window.__balloonYTLoaded = true;
 
   /* ── Settings ─────────────────────────────────────────────────── */
   // Read from same storage structure as the popup (nested `settings` object)
@@ -14,13 +14,21 @@
 
   let trustedSet = new Set();
 
+  let enabled = true;
+
   function loadStorage(cb) {
     chrome.storage.sync.get(['settings', 'trustedHandles'], data => {
       const s = data.settings || {};
+      enabled = s.platforms?.youtube !== false;
       settings.showBadges        = s.showTweetBadge   !== false;
       settings.showBanners       = s.showProfileBanner !== false;
       settings.showSidebarWidget = s.showSidebarWidget !== false;
       trustedSet = new Set((data.trustedHandles || []).map(h => h.toLowerCase()));
+      if (!enabled) {
+        document.querySelectorAll('.balloon-yt-badge-wrap, .balloon-yt-block-overlay, #balloon-yt-banner')
+          .forEach(el => el.remove());
+        document.querySelectorAll('[data-balloon-yt-done]').forEach(el => delete el.dataset.balloonYtDone);
+      }
       if (cb) cb();
     });
   }
@@ -133,15 +141,15 @@
   /* ── Account map ──────────────────────────────────────────────── */
   const ytMap = new Map(); // normalized handle → account
 
-  for (const acc of PLUTO_ACCOUNTS) {
-    const c = PLUTO_CATEGORIES[acc.category];
+  for (const acc of BALLOON_ACCOUNTS) {
+    const c = BALLOON_CATEGORIES[acc.category];
     if (c?.hidden) continue;
     ytMap.set(acc.handle.toLowerCase(), acc);
     ytMap.set(norm(acc.handle), acc);
   }
 
   for (const [ytH, twitterH] of Object.entries(YT_OVERRIDES)) {
-    const acc = PLUTO_ACCOUNTS.find(a => a.handle.toLowerCase() === twitterH.toLowerCase());
+    const acc = BALLOON_ACCOUNTS.find(a => a.handle.toLowerCase() === twitterH.toLowerCase());
     if (acc) {
       ytMap.set(ytH.toLowerCase(), acc);
       ytMap.set(norm(ytH), acc);
@@ -156,7 +164,7 @@
 
   /* ── Category helper ──────────────────────────────────────────── */
   function cat(account) {
-    const c = PLUTO_CATEGORIES[account?.category];
+    const c = BALLOON_CATEGORIES[account?.category];
     if (!c || c.hidden) return null;
     return c;
   }
@@ -183,11 +191,11 @@
 
     // Wrapper ensures block layout regardless of YouTube's parent flex/grid
     const wrap = document.createElement('div');
-    wrap.className = 'pluto-yt-badge-wrap';
+    wrap.className = 'balloon-yt-badge-wrap';
 
     const el = document.createElement('span');
-    el.className = 'pluto-yt-badge';
-    el.dataset.plutoCategory = acc.category;
+    el.className = 'balloon-yt-badge';
+    el.dataset.balloonCategory = acc.category;
     el.title = [c.label, acc.country ? `(${acc.country})` : '', acc.detail].filter(Boolean).join(' — ');
     el.innerHTML = `<span class="pyb-icon">${c.textIcon}</span><span class="pyb-label">${c.label}</span>`;
     el.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
@@ -201,8 +209,8 @@
     const c = cat(acc);
     if (!c) return null;
     const el = document.createElement('div');
-    el.id = 'pluto-yt-banner';
-    el.className = `pluto-yt-banner pluto-yt-cat-${acc.category}`;
+    el.id = 'balloon-yt-banner';
+    el.className = `balloon-yt-banner balloon-yt-cat-${acc.category}`;
     el.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
 
     const name = displayName || `@${acc.handle}`;
@@ -242,7 +250,7 @@
 
   /* ── Video card processing ────────────────────────────────────── */
   function processVideoCard(card) {
-    if (card.dataset.plutoYtDone) return;
+    if (card.dataset.balloonYtDone) return;
 
     // Try multiple selectors for channel link — YouTube changes these periodically
     const channelLink =
@@ -256,11 +264,11 @@
 
     const handle = handleFromHref(channelLink.getAttribute('href'));
     if (!handle) {
-      card.dataset.plutoYtDone = 'no-handle';
+      card.dataset.balloonYtDone = 'no-handle';
       return;
     }
 
-    card.dataset.plutoYtDone = handle;
+    card.dataset.balloonYtDone = handle;
 
     if (isTrusted(handle)) return;
     if (!settings.showBadges) return;
@@ -272,7 +280,7 @@
     if (!badge) return;
 
     // Don't double-badge
-    if (card.querySelector('.pluto-yt-badge-wrap')) return;
+    if (card.querySelector('.balloon-yt-badge-wrap')) return;
 
     // Insert after channel name element
     const nameEl =
@@ -287,10 +295,10 @@
         card.querySelector('ytd-thumbnail') ||
         card.querySelector('a#thumbnail') ||
         card.querySelector('#thumbnail');
-      if (thumb && !thumb.querySelector('.pluto-yt-block-overlay')) {
+      if (thumb && !thumb.querySelector('.balloon-yt-block-overlay')) {
         const overlay = document.createElement('div');
-        overlay.className = 'pluto-yt-block-overlay';
-        const catDef = PLUTO_CATEGORIES[acc.category] || {};
+        overlay.className = 'balloon-yt-block-overlay';
+        const catDef = BALLOON_CATEGORIES[acc.category] || {};
         overlay.innerHTML = `<div class="pybo-inner"><span class="pybo-icon">${catDef.textIcon || '★'}</span><span class="pybo-text">State Media</span></div>`;
         overlay.style.cssText = `--pb:${catDef.bgColor || '#fffbeb'};--pc:${catDef.color || '#b45309'}`;
         thumb.style.position = 'relative';
@@ -306,7 +314,7 @@
   let watchBannerHandle = null;
 
   function processWatchPage() {
-    if (!settings.showBanners) return;
+    if (!settings.showBanners || !enabled) return;
     if (!location.pathname.startsWith('/watch')) return;
 
     const ownerLink =
@@ -324,7 +332,7 @@
     if (!acc) return;
 
     watchBannerHandle = handle.toLowerCase();
-    document.getElementById('pluto-yt-banner')?.remove();
+    document.getElementById('balloon-yt-banner')?.remove();
 
     const displayName = ownerLink.textContent.trim();
     const banner = makeYtBanner(acc, displayName);
@@ -346,7 +354,7 @@
   let channelBannerHandle = null;
 
   function processChannelPage() {
-    if (!settings.showBanners) return;
+    if (!settings.showBanners || !enabled) return;
     const m = location.pathname.match(/^\/@([^/?&#]+)/);
     if (!m) return;
     const handle = m[1];
@@ -356,7 +364,7 @@
     if (!acc) return;
 
     channelBannerHandle = handle.toLowerCase();
-    document.getElementById('pluto-yt-banner')?.remove();
+    document.getElementById('balloon-yt-banner')?.remove();
 
     const displayName =
       document.querySelector('ytd-channel-header-renderer #channel-name yt-formatted-string')?.textContent.trim() ||
@@ -379,34 +387,27 @@
   }
 
   /* ── Sidebar widget ───────────────────────────────────────────── */
-  const YT_SIDEBAR_ID = 'pluto-yt-sidebar-widget';
-  const YT_PANEL_ID   = 'pluto-yt-panel';
+  const YT_SIDEBAR_ID = 'balloon-yt-sidebar-widget';
+  const YT_PANEL_ID   = 'balloon-yt-panel';
 
   function makeSidebarWidget() {
     const wrap = document.createElement('div');
     wrap.id = YT_SIDEBAR_ID;
-    wrap.className = 'pluto-yt-sidebar';
+    wrap.className = 'balloon-yt-sidebar';
 
     wrap.innerHTML = `
       <div class="pys-widget" id="${YT_SIDEBAR_ID}-btn">
-        <span class="pys-glow">
-          <svg width="18" height="18" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/>
-            <line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/>
-            <line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/>
-            <line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-        </span>
+        <span class="pys-glow">${BalloonCore.logo(22)}</span>
         <div class="pys-text">
-          <span class="pys-name">Pluto</span>
-          <span class="pys-sub" id="${YT_SIDEBAR_ID}-count">Media Intelligence</span>
+          <span class="pys-name">Balloon</span>
+          <span class="pys-sub" id="${YT_SIDEBAR_ID}-count">Source Verification</span>
         </div>
         <span class="pys-beta">BETA</span>
       </div>
-      <div class="pluto-yt-panel" id="${YT_PANEL_ID}">
-        <div class="pyp-header"><span>Flagged on this page</span><span class="pyp-shortcut">Alt+P</span></div>
-        <div class="pyp-list" id="pluto-yt-panel-list"></div>
-        <div class="pyp-footer" id="pluto-yt-panel-footer"></div>
+      <div class="balloon-yt-panel" id="${YT_PANEL_ID}">
+        <div class="pyp-header"><span>Flagged on this page</span><span class="pyp-shortcut">Alt+B</span></div>
+        <div class="pyp-list" id="balloon-yt-panel-list"></div>
+        <div class="pyp-footer" id="balloon-yt-panel-footer"></div>
       </div>`;
 
     wrap.querySelector(`#${YT_SIDEBAR_ID}-btn`).addEventListener('click', toggleYtPanel);
@@ -422,14 +423,14 @@
   }
 
   function renderYtPanel() {
-    const list   = document.getElementById('pluto-yt-panel-list');
-    const footer = document.getElementById('pluto-yt-panel-footer');
+    const list   = document.getElementById('balloon-yt-panel-list');
+    const footer = document.getElementById('balloon-yt-panel-footer');
     if (!list) return;
     list.innerHTML = '';
 
     const attachRescan = btn => btn?.addEventListener('click', () => {
-      document.querySelectorAll('[data-pluto-yt-done]').forEach(el => delete el.dataset.plutoYtDone);
-      document.querySelectorAll('.pluto-yt-badge-wrap').forEach(el => el.remove());
+      document.querySelectorAll('[data-balloon-yt-done]').forEach(el => delete el.dataset.balloonYtDone);
+      document.querySelectorAll('.balloon-yt-badge-wrap').forEach(el => el.remove());
       pageFlags.clear();
       updateSidebarCount();
       scan(document.body);
@@ -469,11 +470,14 @@
     if (!el) return;
     el.textContent = pageFlags.size > 0
       ? `${pageFlags.size} flagged this page`
-      : 'Media Intelligence';
+      : 'Source Verification';
   }
 
   function injectSidebarWidget() {
-    if (!settings.showSidebarWidget) return;
+    if (!settings.showSidebarWidget || !enabled) {
+      document.getElementById(YT_SIDEBAR_ID)?.remove();
+      return;
+    }
 
     // Remove stale widget if it's been detached from the live DOM
     const existing = document.getElementById(YT_SIDEBAR_ID);
@@ -494,9 +498,9 @@
     target.insertAdjacentElement('afterbegin', makeSidebarWidget());
   }
 
-  /* ── Keyboard shortcut Alt+P ──────────────────────────────────── */
+  /* ── Keyboard shortcut Alt+B ──────────────────────────────────── */
   document.addEventListener('keydown', e => {
-    if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === 'p') {
+    if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyB') {
       e.preventDefault();
       toggleYtPanel();
     }
@@ -514,10 +518,10 @@
   ].join(', ');
 
   function scan(root) {
-    if (!root?.querySelectorAll) return;
+    if (!root?.querySelectorAll || !enabled) return;
     root.querySelectorAll(VIDEO_CARD_SELECTORS).forEach(processVideoCard);
     // Fallback: catch any channel link not inside a known card element
-    root.querySelectorAll('a[href*="/@"]:not([data-pluto-scanned])').forEach(link => {
+    root.querySelectorAll('a[href*="/@"]:not([data-balloon-scanned])').forEach(link => {
       const card =
         link.closest('ytd-rich-grid-media') ||
         link.closest('ytd-video-renderer') ||
@@ -560,7 +564,7 @@
     const newPath = location.pathname + location.search;
     if (newPath === lastPath) return;
     lastPath = newPath;
-    document.getElementById('pluto-yt-banner')?.remove();
+    document.getElementById('balloon-yt-banner')?.remove();
     watchBannerHandle   = null;
     channelBannerHandle = null;
     pageFlags.clear();
@@ -583,5 +587,20 @@
   [0, 300, 700, 1400, 2500, 4000].forEach(d => setTimeout(injectSidebarWidget, d));
   setInterval(injectSidebarWidget, 800);
   setInterval(() => scan(document.body), 2000);
+
+  /* ── Source links + keyword filter (shared core) ──────────────── */
+  BalloonCore.watch({
+    platform: 'youtube',
+    postSelector: [
+      'ytd-rich-item-renderer', 'ytd-video-renderer', 'ytd-compact-video-renderer',
+      'ytd-grid-video-renderer', 'ytd-reel-item-renderer', 'yt-lockup-view-model',
+      'ytd-comment-thread-renderer', 'ytd-watch-metadata'
+    ].join(', '),
+    // Keyword filter hides cards and comments, never the video you're watching
+    getText: el => el.matches('ytd-watch-metadata') ? '' : BalloonCore.textOf(el),
+    stripHost: el =>
+      el.querySelector('#description-inner, #description') ||
+      el.querySelector('#content-text')?.parentElement || null
+  });
 
 })();

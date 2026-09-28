@@ -1,45 +1,45 @@
 /* ═══════════════════════════════════════════════════════════
-   PLUTO — injected styles for twitter.com / x.com
+   BALLOON — injected styles for twitter.com / x.com
    Brand: #7c3aed  |  Font: system-ui
 ═══════════════════════════════════════════════════════════ */
 
 /* ── Keyframe animations ─────────────────────────────────── */
 
-@keyframes pluto-badge-in {
+@keyframes balloon-badge-in {
   from { opacity: 0; transform: scale(0.78) translateY(3px); }
   to   { opacity: 1; transform: scale(1)    translateY(0);   }
 }
-@keyframes pluto-banner-in {
+@keyframes balloon-banner-in {
   from { opacity: 0; transform: translateY(-10px); }
   to   { opacity: 1; transform: translateY(0);     }
 }
-@keyframes pluto-overlay-in {
+@keyframes balloon-overlay-in {
   from { opacity: 0; transform: scale(0.94); }
   to   { opacity: 1; transform: scale(1);    }
 }
-@keyframes pluto-sidebar-in {
+@keyframes balloon-sidebar-in {
   from { opacity: 0; transform: translateX(-12px); }
   to   { opacity: 1; transform: translateX(0);     }
 }
-@keyframes pluto-bump {
+@keyframes balloon-bump {
   0%   { transform: scale(1);    }
   40%  { transform: scale(1.28); }
   70%  { transform: scale(0.93); }
   100% { transform: scale(1);    }
 }
-@keyframes pluto-toast-in {
+@keyframes balloon-toast-in {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0);    }
 }
-@keyframes pluto-spin {
+@keyframes balloon-spin {
   from { transform: rotate(0deg);   }
   to   { transform: rotate(360deg); }
 }
 
 /* ── Sidebar widget — styled to match Twitter nav items ─── */
 
-#pluto-sidebar-widget {
-  animation: pluto-sidebar-in 0.35s cubic-bezier(.22,1,.36,1) both;
+#balloon-sidebar-widget {
+  animation: balloon-sidebar-in 0.35s cubic-bezier(.22,1,.36,1) both;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   position: sticky;
   top: 0;
@@ -106,14 +106,14 @@
   line-height: 1;
   box-shadow: 0 0 0 2px #fff;
 }
-.psw-pill:not(.pluto-pill-hide) { display: inline-flex; }
-.psw-pill.pluto-bump { animation: pluto-bump 0.45s cubic-bezier(.22,1,.36,1); }
-.psw-pill.pluto-pill-hide { display: none !important; }
+.psw-pill:not(.balloon-pill-hide) { display: inline-flex; }
+.psw-pill.balloon-bump { animation: balloon-bump 0.45s cubic-bezier(.22,1,.36,1); }
+.psw-pill.balloon-pill-hide { display: none !important; }
 
 /* Compact / icon-only sidebar (Twitter narrows nav to icons only) */
-#pluto-sidebar-widget.psw-compact .psw-name,
-#pluto-sidebar-widget.psw-compact .psw-beta { display: none; }
-#pluto-sidebar-widget.psw-compact .psw-wrap  { gap: 0; }
+#balloon-sidebar-widget.psw-compact .psw-name,
+#balloon-sidebar-widget.psw-compact .psw-beta { display: none; }
+#balloon-sidebar-widget.psw-compact .psw-wrap  { gap: 0; }
 
 /* Twitter dark mode */
 html.dark .psw-name  { color: #f1f5f9; }
@@ -123,7 +123,7 @@ html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
 
 /* ── Sidebar mini-panel (inline expand) ─────────────────── */
 
-.pluto-panel {
+.balloon-panel {
   overflow: hidden;
   max-height: 0;
   opacity: 0;
@@ -136,7 +136,7 @@ html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   position: relative; z-index: 100;
 }
-.pluto-panel.pp-open {
+.balloon-panel.pp-open {
   max-height: 300px;
   opacity: 1;
 }
@@ -190,7 +190,7 @@ html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
 
 /* ── Inline badge ────────────────────────────────────────── */
 
-.pluto-badge {
+.balloon-badge {
   position: relative;
   display: inline-flex; align-items: center; gap: 4px;
   margin-left: 5px;
@@ -204,10 +204,10 @@ html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
   background: var(--pb);
   color: var(--pc);
   border: 1.5px solid var(--pbd);
-  animation: pluto-badge-in 0.28s cubic-bezier(.22,1,.36,1) both;
+  animation: balloon-badge-in 0.28s cubic-bezier(.22,1,.36,1) both;
   transition: filter 0.12s, box-shadow 0.12s, transform 0.12s;
 }
-.pluto-badge:hover {
+.balloon-badge:hover {
   filter: brightness(0.93);
   box-shadow: 0 3px 10px rgba(0,0,0,0.12);
   transform: translateY(-1px);
@@ -221,7 +221,7 @@ html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
 
 /* ── Tooltip ─────────────────────────────────────────────── */
 
-.pluto-tip {
+.balloon-tip {
   display: none;
   position: absolute;
   bottom: calc(100% + 11px); left: 50%; transform: translateX(-50%);
@@ -235,15 +235,15 @@ html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
   box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
   white-space: normal; z-index: 99999;
   pointer-events: none; line-height: 1.55; text-align: left;
-  animation: pluto-overlay-in 0.2s ease both;
+  animation: balloon-overlay-in 0.2s ease both;
 }
-.pluto-tip::after {
+.balloon-tip::after {
   content: ""; position: absolute;
   top: 100%; left: 50%; transform: translateX(-50%);
   border: 7px solid transparent;
   border-top-color: #0d1117;
 }
-.pluto-badge:hover .pluto-tip { display: block; }
+.balloon-badge:hover .balloon-tip { display: block; }
 
 .pt-head {
   display: flex; align-items: flex-start; gap: 10px;
@@ -269,70 +269,70 @@ html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
 
 /* ── Avatar dot ──────────────────────────────────────────── */
 
-.pluto-avatar-dot {
+.balloon-avatar-dot {
   position: absolute; bottom: 0; right: 0;
   width: 11px; height: 11px; border-radius: 50%;
   border: 2.5px solid #fff; z-index: 5;
   pointer-events: none;
-  animation: pluto-badge-in 0.3s 0.15s cubic-bezier(.22,1,.36,1) both;
+  animation: balloon-badge-in 0.3s 0.15s cubic-bezier(.22,1,.36,1) both;
 }
-html.dark .pluto-avatar-dot { border-color: #000; }
+html.dark .balloon-avatar-dot { border-color: #000; }
 
 /* ── Profile banner ──────────────────────────────────────── */
 
-#pluto-profile-banner {
+#balloon-profile-banner {
   display: flex; align-items: center; gap: 0;
   background: var(--pb);
   border-left: 3px solid var(--pbd);
   border-bottom: 1px solid rgba(0,0,0,0.06);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  animation: pluto-banner-in 0.28s cubic-bezier(.22,1,.36,1) both;
+  animation: balloon-banner-in 0.28s cubic-bezier(.22,1,.36,1) both;
   transition: opacity 0.2s, transform 0.2s;
   padding: 10px 12px 10px 14px;
 }
-#pluto-profile-banner.pluto-banner-out {
+#balloon-profile-banner.balloon-banner-out {
   opacity: 0; transform: translateY(-5px);
 }
 
-.pluto-banner-content { flex: 1; min-width: 0; }
+.balloon-banner-content { flex: 1; min-width: 0; }
 
-.pluto-banner-row1 {
+.balloon-banner-row1 {
   display: flex; align-items: center; flex-wrap: wrap; gap: 5px;
   margin-bottom: 3px;
 }
-.pluto-banner-cat-icon {
+.balloon-banner-cat-icon {
   display: flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 5px;
   background: var(--pbd); color: #fff; flex-shrink: 0;
 }
-.pluto-banner-cat-icon svg { width: 11px; height: 11px; }
+.balloon-banner-cat-icon svg { width: 11px; height: 11px; }
 
-.pluto-banner-name { font-size: 12.5px; font-weight: 700; color: var(--pc); }
+.balloon-banner-name { font-size: 12.5px; font-weight: 700; color: var(--pc); }
 
-.pluto-banner-cat-chip {
+.balloon-banner-cat-chip {
   font-size: 9.5px; font-weight: 700;
   color: var(--pc); background: rgba(0,0,0,0.07);
   padding: 1.5px 6px; border-radius: 9px;
 }
-.pluto-banner-blocked-chip {
+.balloon-banner-blocked-chip {
   font-size: 9.5px; font-weight: 700;
   background: var(--pbd); color: #fff;
   padding: 1.5px 6px; border-radius: 9px;
 }
 
-.pluto-banner-detail {
+.balloon-banner-detail {
   font-size: 11.5px; color: #4b5563; line-height: 1.5;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.pluto-banner-source {
+.balloon-banner-source {
   font-size: 10px; color: #9ca3af; margin-top: 2px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.pluto-banner-btns {
+.balloon-banner-btns {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 10px;
 }
-.pluto-banner-trust {
+.balloon-banner-trust {
   display: flex; align-items: center; gap: 3px;
   background: none; border: 1px solid rgba(34,197,94,0.4);
   border-radius: 7px; cursor: pointer;
@@ -341,26 +341,26 @@ html.dark .pluto-avatar-dot { border-color: #000; }
   transition: background 0.14s;
   white-space: nowrap;
 }
-.pluto-banner-trust:hover { background: rgba(34,197,94,0.1); }
+.balloon-banner-trust:hover { background: rgba(34,197,94,0.1); }
 
-.pluto-banner-close {
+.balloon-banner-close {
   display: flex; align-items: center; justify-content: center;
   background: none; border: none; cursor: pointer;
   color: #9ca3af; padding: 3px;
   transition: color 0.14s; border-radius: 5px;
 }
-.pluto-banner-close:hover { color: #374151; }
+.balloon-banner-close:hover { color: #374151; }
 
-html.dark #pluto-profile-banner { border-bottom-color: rgba(255,255,255,0.06); }
-html.dark .pluto-banner-detail  { color: #94a3b8; }
-html.dark .pluto-banner-source  { color: #475569; }
-html.dark .pluto-banner-cat-chip { background: rgba(255,255,255,0.1); }
-html.dark .pluto-banner-close:hover { color: #e2e8f0; }
-html.dark .pluto-banner-trust { color: #4ade80; }
+html.dark #balloon-profile-banner { border-bottom-color: rgba(255,255,255,0.06); }
+html.dark .balloon-banner-detail  { color: #94a3b8; }
+html.dark .balloon-banner-source  { color: #475569; }
+html.dark .balloon-banner-cat-chip { background: rgba(255,255,255,0.1); }
+html.dark .balloon-banner-close:hover { color: #e2e8f0; }
+html.dark .balloon-banner-trust { color: #4ade80; }
 
 /* ── Tweet highlight mode ────────────────────────────────── */
 
-article.pluto-highlighted {
+article.balloon-highlighted {
   background: var(--phc) !important;
   border-left: 3px solid var(--phb);
   padding-left: 2px;
@@ -368,24 +368,24 @@ article.pluto-highlighted {
 
 /* ── Tweet block overlay ─────────────────────────────────── */
 
-article.pluto-blocked {
+article.balloon-blocked {
   position: relative; isolation: isolate;
   overflow: hidden; border-radius: 6px;
 }
-article.pluto-blocked > *:not(.pluto-block-overlay) {
+article.balloon-blocked > *:not(.balloon-block-overlay) {
   filter: blur(8px);
   user-select: none; pointer-events: none; opacity: 0.4;
 }
 
-.pluto-block-overlay {
+.balloon-block-overlay {
   position: absolute; inset: 0; z-index: 20;
   display: flex; align-items: center; justify-content: center;
   padding: 12px 16px;
   background: var(--pb);
-  animation: pluto-overlay-in 0.25s cubic-bezier(.22,1,.36,1) both;
+  animation: balloon-overlay-in 0.25s cubic-bezier(.22,1,.36,1) both;
   transition: opacity 0.2s;
 }
-.pluto-block-overlay.pbo-out { opacity: 0; }
+.balloon-block-overlay.pbo-out { opacity: 0; }
 
 .pbo-inner {
   display: flex; align-items: center; gap: 12px;
@@ -435,7 +435,7 @@ html.dark .pbo-btn    { background: #1e293b; }
 
 /* ── Tweet "···" menu item ───────────────────────────────── */
 
-.pluto-menu-item {
+.balloon-menu-item {
   display: flex; align-items: center; gap: 12px;
   padding: 11px 16px;
   cursor: pointer;
@@ -443,28 +443,28 @@ html.dark .pbo-btn    { background: #1e293b; }
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: inherit;
 }
-.pluto-menu-item:hover { background: rgba(124,58,237,0.07); }
-.pluto-menu-item:focus-visible { outline: 2px solid rgba(124,58,237,0.5); outline-offset: -2px; }
+.balloon-menu-item:hover { background: rgba(124,58,237,0.07); }
+.balloon-menu-item:focus-visible { outline: 2px solid rgba(124,58,237,0.5); outline-offset: -2px; }
 
-.pluto-menu-icon {
+.balloon-menu-icon {
   width: 20px; height: 20px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.pluto-menu-text {
+.balloon-menu-text {
   font-size: 15px; font-weight: 400; color: inherit;
 }
 
-.pluto-menu-divider {
+.balloon-menu-divider {
   height: 1px; background: rgba(0,0,0,0.08);
   margin: 4px 0;
 }
 
-html.dark .pluto-menu-item:hover { background: rgba(167,139,250,0.1); }
-html.dark .pluto-menu-divider { background: rgba(255,255,255,0.08); }
+html.dark .balloon-menu-item:hover { background: rgba(167,139,250,0.1); }
+html.dark .balloon-menu-divider { background: rgba(255,255,255,0.08); }
 
 /* ── Toast notification ──────────────────────────────────── */
 
-.pluto-toast {
+.balloon-toast {
   position: fixed; bottom: 22px; right: 22px; z-index: 999999;
   display: flex; align-items: center; gap: 10px;
   background: #0d1117;
@@ -479,17 +479,41 @@ html.dark .pluto-menu-divider { background: rgba(255,255,255,0.08); }
               transform 0.25s cubic-bezier(.22,1,.36,1);
   pointer-events: none;
 }
-.pluto-toast.pluto-toast-show {
+.balloon-toast.balloon-toast-show {
   opacity: 1; transform: translateY(0);
 }
-.pluto-toast-icon {
+.balloon-toast-icon {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 30px; height: 30px;
   background: rgba(124,58,237,0.18); border-radius: 9px;
 }
-.pluto-toast-text {
+.balloon-toast-text {
   flex: 1; display: flex; flex-direction: column; gap: 2px;
 }
-.pluto-toast-main { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-.pluto-toast-sub  { font-size: 11px; color: #64748b; }
+.balloon-toast-main { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
+.balloon-toast-sub  { font-size: 11px; color: #64748b; }
 
+
+/* ── Balloon motion layer ────────────────────────────────── */
+
+/* Sidebar balloon bobs gently; string-like sway on hover */
+.psw-glow .balloon-logo {
+  animation: balloon-float 3.4s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.psw-wrap:hover .psw-glow .balloon-logo { animation-duration: 1.4s; }
+
+/* Badges pop in with a springy overshoot */
+.balloon-badge { animation: balloon-pop-in 0.5s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* Blocked tweet overlay: the icon floats, reveal "pops" the overlay */
+.pbo-icon-ring { animation: balloon-float 3s ease-in-out infinite; }
+.balloon-block-overlay.pbo-out { animation: balloon-pop-out 0.38s ease-in forwards; }
+
+/* Highlighted tweets get a soft animated edge */
+article.balloon-highlighted { animation: balloon-slide-up 0.4s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .psw-glow .balloon-logo, .balloon-badge, .pbo-icon-ring,
+  .balloon-block-overlay.pbo-out, article.balloon-highlighted { animation: none !important; }
+}

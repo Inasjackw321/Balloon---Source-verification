@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Pluto — Media Intelligence",
-  "short_name": "Pluto",
-  "version": "3.1.0",
-  "description": "Pluto flags state propaganda on Twitter/X and YouTube — with source citations and smart content controls.",
+  "name": "Balloon — Source Verification",
+  "short_name": "Balloon",
+  "version": "4.0.0",
+  "description": "Balloon highlights bad sources and state media on X/Twitter, YouTube, Instagram and Facebook — and blocks the posts you don't want to see.",
   "permissions": [
     "storage",
     "contextMenus"
@@ -12,7 +12,11 @@
     "https://twitter.com/*",
     "https://x.com/*",
     "https://www.youtube.com/*",
-    "https://youtube.com/*"
+    "https://youtube.com/*",
+    "https://www.instagram.com/*",
+    "https://www.facebook.com/*",
+    "https://web.facebook.com/*",
+    "https://m.facebook.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -20,28 +24,42 @@
   "content_scripts": [
     {
       "matches": ["https://twitter.com/*", "https://x.com/*"],
-      "js": ["accounts.js", "content.js"],
-      "css": ["styles.css"],
+      "js": ["accounts.js", "aliases.js", "sources.js", "core.js", "content.js"],
+      "css": ["core.css", "styles.css"],
       "run_at": "document_end"
     },
     {
       "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
-      "js": ["accounts.js", "youtube-content.js"],
-      "css": ["youtube-styles.css"],
+      "js": ["accounts.js", "aliases.js", "sources.js", "core.js", "youtube-content.js"],
+      "css": ["core.css", "youtube-styles.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.instagram.com/*"],
+      "js": ["accounts.js", "aliases.js", "sources.js", "core.js", "instagram-content.js"],
+      "css": ["core.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.facebook.com/*", "https://web.facebook.com/*", "https://m.facebook.com/*"],
+      "js": ["accounts.js", "aliases.js", "sources.js", "core.js", "facebook-content.js"],
+      "css": ["core.css"],
       "run_at": "document_idle"
     }
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Pluto — Media Intelligence",
+    "default_title": "Balloon — Source Verification",
     "default_icon": {
       "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
   },
   "icons": {
     "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   }
